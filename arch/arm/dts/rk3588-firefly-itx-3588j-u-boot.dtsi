@@ -1,0 +1,303 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2023 Collabora Ltd.
+ */
+
+#include "rk3588-u-boot.dtsi"
+#include <dt-bindings/usb/pd.h>
+
+/ {
+    aliases {
+        mmc0 = &sdhci;
+        mmc1 = &sdmmc;
+    };
+
+    chosen {
+        stdout-path = &uart2;
+        u-boot,spl-boot-order = &sdmmc, &sdhci, &spi_nand, &spi_nor;
+    };
+
+    firmware: firmware {
+        scmi: scmi {
+            compatible = "arm,scmi-smc";
+            shmem = <&scmi_shmem>;
+            arm,smc-id = <0x82000010>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+
+            scmi_clk: protocol@14 {
+                reg = <0x14>;
+                #clock-cells = <1>;
+
+                assigned-clocks = <&scmi_clk SCMI_CLK_CPUL>,
+                                  <&scmi_clk SCMI_CLK_CPUB01>,
+                                  <&scmi_clk SCMI_CLK_CPUB23>;
+                assigned-clock-rates = <816000000>,
+                                       <816000000>,
+                                       <816000000>;
+            };
+
+            scmi_reset: protocol@16 {
+                reg = <0x16>;
+                #reset-cells = <1>;
+            };
+        };
+
+        sdei: sdei {
+            compatible = "arm,sdei-1.0";
+            method = "smc";
+        };
+    };
+
+    secure-otp@fe3a0000 {
+        bootph-pre-ram;
+        compatible = "rockchip,rk3588-secure-otp";
+        reg = <0x0 0xfe3a0000 0x0 0x4000>;
+    };
+
+};
+
+&firmware {
+    bootph-pre-ram;
+};
+
+&gpio0 {
+    bootph-pre-ram;
+    status = "okay";
+};
+
+&gpio1 {
+    bootph-all;
+    status = "okay";
+};
+
+&gpio2 {
+    bootph-all;
+    status = "okay";
+};
+
+&gpio3 {
+    bootph-all;
+    status = "okay";
+};
+
+&gpio4 {
+    bootph-all;
+    status = "okay";
+};
+
+&scmi {
+    bootph-pre-ram;
+};
+
+&scmi_clk {
+    bootph-pre-ram;
+};
+
+&pmu_sram {
+    bootph-pre-ram;
+};
+
+&scmi_shmem {
+    bootph-pre-ram;
+};
+
+&xin24m {
+    bootph-all;
+    status = "okay";
+};
+
+&cru {
+    bootph-pre-ram;
+    status = "okay";
+};
+
+&psci {
+    bootph-all;
+    status = "okay";
+};
+
+// This was used in the BSP 2017 U-Boot. It offers accelerated
+// crypto performed in hardware, but the driver model DM_CRYPTO does
+// not exist anymore. Disabling it until someone(tm) can perform
+// the adaption to the new DM_HASH etc. models.
+/*&crypto {
+    bootph-pre-ram;
+    status = "okay";
+}; */
+
+&sys_grf {
+    bootph-pre-ram;
+    status = "okay";
+};
+
+&pcie30_phy_grf {
+    bootph-all;
+    status = "okay";
+};
+
+&php_grf {
+    bootph-all;
+    status = "okay";
+};
+
+&pipe_phy0_grf {
+    bootph-all;
+    status = "okay";
+};
+
+&pipe_phy1_grf {
+    bootph-all;
+    status = "okay";
+};
+
+&pipe_phy2_grf {
+    bootph-all;
+    status = "okay";
+};
+
+&uart2 {
+    bootph-pre-ram;
+    status = "okay";
+};
+
+// This was used in the BSP 2017 U-Boot. It offers accelerated
+// decompression, but was implemented as a non-standard DM_MISC driver
+// plus some possible non-upstreamable patches to the U-Boot core.
+// Disabling it until someone(tm) can adapt it.
+/*&hw_decompress {
+    bootph-pre-ram;
+    status = "okay";
+};*/
+
+&rng {
+    bootph-all;
+    status = "okay";
+};
+
+&sfc {
+    bootph-pre-ram;
+    status = "okay";
+
+    #address-cells = <1>;
+    #size-cells = <0>;
+    spi_nand: flash@0 {
+        bootph-pre-ram;
+        compatible = "spi-nand";
+        reg = <0>;
+        spi-tx-bus-width = <1>;
+        spi-rx-bus-width = <4>;
+        spi-max-frequency = <80000000>;
+    };
+
+    spi_nor: flash@1 {
+        bootph-pre-ram;
+        compatible = "jedec,spi-nor";
+        label = "sfc_nor";
+        reg = <0>;
+        spi-tx-bus-width = <1>;
+        spi-rx-bus-width = <4>;
+        spi-max-frequency = <80000000>;
+    };
+};
+
+&saradc {
+    bootph-all;
+    status = "okay";
+};
+
+&sdmmc {
+    bootph-pre-ram;
+//    cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
+    status = "okay";
+};
+
+&sdhci {
+    bootph-pre-ram;
+    status = "okay";
+};
+
+&usb2phy0_grf {
+    bootph-all;
+};
+
+&u2phy0 {
+    bootph-all;
+    status = "okay";
+};
+
+&u2phy0_otg {
+    bootph-all;
+    status = "okay";
+};
+
+/* Support SPL-PINCTRL:
+ * 1. ioc
+ * 2. pinctrl(sdmmc)
+ * 3. gpio if need
+ */
+&ioc {
+    bootph-pre-ram;
+};
+
+&pinctrl {
+    bootph-pre-ram;
+
+    /delete-node/ sdmmc;
+    sdmmc {
+        bootph-pre-ram;
+        sdmmc_bus4: sdmmc-bus4 {
+            bootph-pre-ram;
+            rockchip,pins =
+            // sdmmc_d0 
+                    <4 RK_PD0 1 &pcfg_pull_up_drv_level_2>,
+            // sdmmc_d1 
+                    <4 RK_PD1 1 &pcfg_pull_up_drv_level_2>,
+            // sdmmc_d2 
+                    <4 RK_PD2 1 &pcfg_pull_up_drv_level_2>,
+            // sdmmc_d3 
+                    <4 RK_PD3 1 &pcfg_pull_up_drv_level_2>;
+        };
+
+        sdmmc_clk: sdmmc-clk {
+            bootph-pre-ram;
+            rockchip,pins =
+            // sdmmc_clk 
+                    <4 RK_PD5 1 &pcfg_pull_up_drv_level_2>;
+        };
+
+        sdmmc_cmd: sdmmc-cmd {
+            bootph-pre-ram;
+            rockchip,pins =
+            // sdmmc_cmd 
+                    <4 RK_PD4 1 &pcfg_pull_up_drv_level_2>;
+        };
+
+        sdmmc_det: sdmmc-det {
+            bootph-pre-ram;
+            rockchip,pins =
+            // sdmmc_det 
+                    <0 RK_PA4 1 &pcfg_pull_up>;
+        };
+
+        sdmmc_pwren: sdmmc-pwren {
+            bootph-pre-ram;
+            rockchip,pins =
+            // sdmmc_pwren 
+                    <0 RK_PA5 2 &pcfg_pull_none>;
+        };
+    };
+};
+
+&pcfg_pull_up_drv_level_2 {
+    bootph-pre-ram;
+};
+
+&pcfg_pull_up {
+    bootph-pre-ram;
+};
+
+&pcfg_pull_none
+{
+    bootph-pre-ram;
+};
