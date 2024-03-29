@@ -79,6 +79,14 @@
 		vin-supply = <&avcc_1v8_s0>;
 	};
 
+	vbus5v0_typec_pwr_en: vbus5v0-typec-pwr-en-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vbus5v0_typec_pwr_en";
+		enable-active-high;
+		status = "disabled";
+		gpio = <&pca9555 PCA_IO1_4 GPIO_ACTIVE_HIGH>;  //PCA_IO 14
+	};
+
 	vcc12v_dcin: vcc12v-dcin-regulator {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc12v_dcin";
@@ -208,17 +216,6 @@
 &i2c2 {
 	status = "okay";
 
-	hym8563: rtc@51 {
-		compatible = "haoyu,hym8563";
-		reg = <0x51>;
-		#clock-cells = <0>;
-		clock-output-names = "hym8563";
-		pinctrl-names = "default";
-		pinctrl-0 = <&hym8563_int>;
-		interrupt-parent = <&gpio0>;
-		interrupts = <RK_PD4 IRQ_TYPE_LEVEL_LOW>;
-		wakeup-source;
-	};
 };
 
 &uart2 {
@@ -334,15 +331,19 @@
 };
 
 &pcie3x4 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pcie3_rst>;
 	reset-gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
 	vpcie3v3-supply = <&vcc3v3_pcie30>;
 	status = "okay";
 };
-//&vcc3v3_pcie30 {
-//	gpios = <&gpio2 RK_PC5 GPIO_ACTIVE_HIGH>;
-//	startup-delay-us = <5000>;
-//	status = "okay";
-//};
+
+
+&vcc3v3_pcie30 {
+	gpios = <&gpio2 RK_PC5 GPIO_ACTIVE_HIGH>;
+    startup-delay-us = <5000>;
+	status = "okay";
+};
 
 // sata pm
 &combphy0_ps {
@@ -393,16 +394,10 @@
 //	status = "okay";
 //};
 
-//&usbc0 {
-//	status = "okay";
-//	interrupt-parent = <&gpio0>;
-//	interrupts = <RK_PD3 IRQ_TYPE_LEVEL_LOW>;
-//};
-
-//&vbus5v0_typec_pwr_en {
-//	status = "okay";
-//	gpio = <&pca9555 PCA_IO1_4 GPIO_ACTIVE_HIGH>;  //PCA_IO 14
-//};
+&vbus5v0_typec_pwr_en {
+	status = "okay";
+	gpio = <&pca9555 PCA_IO1_4 GPIO_ACTIVE_HIGH>;  //PCA_IO 14
+};
 
 // pinctrl
 &pinctrl {
@@ -486,7 +481,7 @@
 	};
 
 	pcie3 {
-		pcie3_reset: pcie3-reset {
+		pcie3_rst: pcie3-rst {
 			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 
@@ -500,6 +495,7 @@
 			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
+
 };
 
 &pwm2 {
@@ -1162,3 +1158,4 @@
 &usb_host1_ohci {
 	status = "okay";
 };
+

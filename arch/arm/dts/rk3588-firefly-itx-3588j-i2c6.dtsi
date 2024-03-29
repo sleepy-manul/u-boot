@@ -12,7 +12,7 @@
         gpio-controller;
         #gpio-cells = <2>;
         gpio-group-num = <200>;
-        status = "disabled";
+        status = "okay";
     };
 
     hym8563: hym8563@51 {
@@ -26,7 +26,7 @@
         interrupt-parent = <&gpio0>;
         interrupts = <RK_PB0 IRQ_TYPE_LEVEL_LOW>;
         wakeup-source;
-        status = "disabled";
+        status = "okay";
     };
 
     usbc0: usb-typec@22 {
@@ -38,18 +38,6 @@
         pinctrl-0 = <&usbc0_int>;
         vbus-supply = <&vbus5v0_typec_pwr_en>;
         status = "okay";
-
-        ports {
-            #address-cells = <1>;
-            #size-cells = <0>;
-
-            port@0 {
-                reg = <0>;
-                usbc0_hs: endpoint@0 {
-                    remote-endpoint = <&dwc3_0_role_switch>;
-                };
-            };
-        };
 
         usb_con: connector {
             compatible = "usb-c-connector";
@@ -80,13 +68,20 @@
 
                 port@0 {
                     reg = <0>;
+					usbc0_hs: endpoint {
+						remote-endpoint = <&usb_host0_xhci_drd_sw>;
+					};
+				};
+
+				port@1 {
+					reg = <1>;
                     usbc0_ss: endpoint {
                         remote-endpoint = <&usbdp_phy0_typec_ss>;
                     };
                 };
 
-                port@1 {
-                    reg = <1>;
+				port@2 {
+					reg = <2>;
                     usbc0_sbu: endpoint {
                         remote-endpoint = <&usbdp_phy0_typec_sbu>;
                     };

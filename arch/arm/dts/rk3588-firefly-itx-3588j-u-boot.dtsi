@@ -4,7 +4,7 @@
  */
 
 #include "rk3588-u-boot.dtsi"
-#include <dt-bindings/usb/pd.h>
+#include "rk3588-firefly-itx-3588j-i2c6.dtsi"
 
 / {
     aliases {
@@ -56,6 +56,7 @@
     };
 
 };
+
 
 &firmware {
     bootph-pre-ram;
@@ -208,7 +209,8 @@
 
 &sdmmc {
     bootph-pre-ram;
-//    cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
+    bus-width = <4>;
+    cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
     status = "okay";
 };
 
@@ -228,8 +230,19 @@
 
 &u2phy0_otg {
     bootph-all;
+    rockchip,typec-vbus-det;
     status = "okay";
 };
+
+&u2phy1 {
+    status = "okay";
+};
+
+&u2phy1_otg {
+    status = "okay";
+};
+
+
 
 /* Support SPL-PINCTRL:
  * 1. ioc
@@ -283,8 +296,14 @@
         sdmmc_pwren: sdmmc-pwren {
             bootph-pre-ram;
             rockchip,pins =
-            // sdmmc_pwren 
+            // sdmmc_pwren
                     <0 RK_PA5 2 &pcfg_pull_none>;
+        };
+    };
+
+    usb-typec {
+        usbc0_int: usbc0-int {
+            rockchip,pins = <0 RK_PD3 RK_FUNC_GPIO &pcfg_pull_up>;
         };
     };
 };
@@ -301,3 +320,64 @@
 {
     bootph-pre-ram;
 };
+
+
+&usbdp_phy1 {
+    status = "okay";
+};
+
+&usbdp_phy1_u3 {
+    status = "okay";
+};
+
+&usbdp_phy0 {
+    orientation-switch;
+    mode-switch;
+    sbu1-dc-gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
+    sbu2-dc-gpios = <&gpio4 RK_PA7 GPIO_ACTIVE_HIGH>;
+    status = "okay";
+
+    port {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        usbdp_phy0_typec_ss: endpoint@0 {
+            reg = <0>;
+            remote-endpoint = <&usbc0_ss>;
+        };
+
+        usbdp_phy0_typec_sbu: endpoint@1 {
+            reg = <1>;
+            remote-endpoint = <&usbc0_sbu>;
+        };
+    };
+};
+
+&usbdp_phy0_u3 {
+    status = "okay";
+};
+
+&usb_host0_xhci {
+    usb-role-switch;
+    status = "okay";
+
+    port {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        usb_host0_xhci_drd_sw: endpoint {
+            remote-endpoint = <&usbc0_hs>;
+        };
+    };
+};
+
+&usb_host1_xhci {
+    status = "okay";
+};
+
+&usbc0 {
+    status = "okay";
+    interrupt-parent = <&gpio0>;
+    interrupts = <RK_PD3 IRQ_TYPE_LEVEL_LOW>;
+};
+
