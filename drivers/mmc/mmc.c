@@ -720,7 +720,7 @@ static int mmc_send_op_cond(struct mmc *mmc)
 	mmc_go_idle(mmc);
 
 	start = get_timer(0);
-	/* Asking to the card its capabilities */
+	/* ask the card for a list of its capabilities */
 	for (i = 0; ; i++) {
 		err = mmc_send_op_cond_iter(mmc, i != 0);
 		if (err)
