@@ -273,7 +273,7 @@ static int is_link_up(struct rk_pcie *priv)
  *
  * @rk_pcie: Pointer to the PCI controller state
  *
- * Return: 1 (true) for active line and negetive (false) for no link (timeout)
+ * Return: 1 (true) for active line and negative (false) for no link (timeout)
  */
 static int rk_pcie_link_up(struct rk_pcie *priv)
 {
