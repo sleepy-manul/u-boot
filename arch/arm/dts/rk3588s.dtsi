@@ -2311,6 +2311,11 @@
 			reg = <0x02 0x2>;
 		};
 
+		specification_serial_number: specification-serial-number@6 {
+			reg = <0x06 0x1>;
+			bits = <0 5>;
+		};
+
 		otp_id: id@7 {
 			reg = <0x07 0x10>;
 		};
@@ -2346,6 +2351,30 @@
 
 		codec_leakage: codec-leakage@29 {
 			reg = <0x29 0x1>;
+		};
+
+		cpul_opp_info: cpul-opp-info@3d {
+			reg = <0x3d 0x6>;
+		};
+
+		cpub01_opp_info: cpub01-opp-info@43 {
+			reg = <0x43 0x6>;
+		};
+
+		cpub23_opp_info: cpub23-opp-info@49 {
+			reg = <0x49 0x6>;
+		};
+
+		gpu_opp_info: gpu-opp-info@4f {
+			reg = <0x4f 0x6>;
+		};
+
+		npu_opp_info: npu-opp-info@55 {
+			reg = <0x55 0x6>;
+		};
+
+		dmc_opp_info: dmc-opp-info@5b {
+			reg = <0x5b 0x6>;
 		};
 	};
 
