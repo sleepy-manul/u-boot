@@ -72,7 +72,7 @@ static int rockchip_dwmmc_of_to_plat(struct udevice *dev)
 	host->get_mmc_clk = rockchip_dwmmc_get_mmc_clk;
 	host->priv = dev;
 
-	/* use non-removeable as sdcard and emmc as judgement */
+	/* use non-removable as sdcard and emmc as criterion */
 	if (dev_read_bool(dev, "non-removable"))
 		host->dev_index = 0;
 	else
