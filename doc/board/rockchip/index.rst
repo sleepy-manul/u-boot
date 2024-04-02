@@ -8,4 +8,5 @@ Rockchip
    :maxdepth: 2
 
    rockchip
+   firefly
    rkmtd
