@@ -13,6 +13,7 @@
 #include <dt-bindings/soc/rockchip-system-status.h>
 #include "rk3588.dtsi"
 #include "rk3588-firefly-itx-3588j-opp-tables.dtsi"
+#include "rk3588-firefly-itx-3588-video.dtsi"
 
 //include "rk3588-firefly-itx-cam-8ms1m.dtsi"
 //include "rk3588-firefly-itx-cam-2ms2m.dtsi"
@@ -22,7 +23,6 @@
 	compatible = "rockchip,rk3588-firefly-itx-3588j", "rockchip,rk3588";
 
 	aliases {
-		serial2 = &uart2;
 		ethernet0 = &gmac0;
 		ethernet1 = &gmac1;
 		mmc0 = &sdhci;
@@ -254,14 +254,6 @@
 
 &cpu_l3 {
 	cpu-supply = <&vdd_cpu_lit_s0>;
-};
-
-
-// ap6275 : bluetooth
-&uart6 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&uart6m1_xfer &uart6m1_ctsn>;
-	status = "okay";
 };
 
 &i2c2 {
@@ -553,11 +545,11 @@
 	status = "okay";
 };
 
+// Successive Approximation Register (SAR) A/D Converter
 &saradc {
 	vref-supply = <&vcc_1v8_s0>;
 	status = "okay";
 };
-
 
 &spi2 {
 	status = "okay";
@@ -1186,11 +1178,6 @@
 	status = "okay";
 };
 
-&uart2 {
-	pinctrl-0 = <&uart2m0_xfer>;
-	status = "okay";
-};
-
 &usb_host0_ehci {
 	status = "okay";
 };
@@ -1215,3 +1202,32 @@
 &cpu_b1 { operating-points-v2 = <&cluster1_opp_table>; };
 &cpu_b2 { operating-points-v2 = <&cluster2_opp_table>; };
 &cpu_b3 { operating-points-v2 = <&cluster2_opp_table>; };
+
+// serial ports
+// RS232 on the board (FC10 connector)
+&uart0 {
+	status = "okay";
+};
+// RS485 on the board (FC10 connector)
+&uart1 {
+	status = "okay";
+};
+// debug port / serial console
+&uart2 {
+	pinctrl-0 = <&uart2m0_xfer>;
+	status = "okay";
+};
+// Bluetooth part of the AP6275 chip
+&uart6 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart6m1_xfer &uart6m1_ctsn>;
+	status = "okay";
+};
+
+// Note to self: dfi@fe060000 (&dfi) is disabled in the BSP, so it is likely
+// that such a device is not present at all.
+
+// thermal sensor analog / digital converter (CPU temperatures etc.)
+&tsadc {
+	status = "okay";
+};
