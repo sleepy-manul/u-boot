@@ -4,6 +4,7 @@
  */
 
 #include "rk3588-u-boot.dtsi"
+#include "rk3588-firefly-itx-3588j-i2c3.dtsi"
 #include "rk3588-firefly-itx-3588j-i2c6.dtsi"
 
 / {
@@ -13,7 +14,6 @@
     };
 
     chosen {
-        stdout-path = &uart2;
         u-boot,spl-boot-order = &sdmmc, &sdhci, &spi_nand, &spi_nor;
     };
 
@@ -214,9 +214,11 @@
 
 &sdhci {
     bootph-pre-ram;
-    cap-mmc-highspeed;
-    mmc-hs200-1_8v;
     status = "okay";
+    /delete-property/ mmc-hs200-1_8v;
+    mmc-hs400-1_8v;
+    /delete-property/ mmc-hs400-enhanced-strobe;
+    /delete-property/ cap-mmc-highspeed;
 };
 
 &usb2phy0_grf {
@@ -337,6 +339,7 @@
 
 &usb_host0_xhci {
     usb-role-switch;
+    dr_mode = "host";
     status = "okay";
 
     port {

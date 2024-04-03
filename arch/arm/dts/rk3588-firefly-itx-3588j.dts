@@ -31,7 +31,7 @@
 
 	chosen {
 		stdout-path = "serial2:1500000n8";
-		bootargs = "earlycon=uart8250,mmio32,0xfeb50000 console=ttyFIQ0 irqchip.gicv3_pseudo_nmi=0 coherent_pool=1m systemd.gpt_auto=0 cgroup_enable=memory swapaccount=1 net.ifnames=0 ignore_loglevel initcall_debug";
+		bootargs = "irqchip.gicv3_pseudo_nmi=0 coherent_pool=1m systemd.gpt_auto=0 cgroup_enable=memory swapaccount=1 net.ifnames=0 ignore_loglevel initcall_debug";
 	};
 
 	dmc: dmc {
@@ -208,8 +208,6 @@
 	bus-width = <8>;
 	no-sd;
 	no-sdio;
-	mmc-hs400-1_8v;
-	mmc-hs400-enhanced-strobe;
 	non-removable;
 	status = "okay";
 };
