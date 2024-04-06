@@ -100,22 +100,22 @@
 #endif
                 };
 #endif
-                optee {
-                    description = "OP-TEE";
-                    data = /incbin/("../../../tee.bin");
-                    type = "firmware";
-                    arch = "arm64";
-                    os = "tee";
-                    compression = "none";
-
-                    load = <0x8400000>;
-                    entry = <0x8400000>;
-#ifdef CONFIG_SPL_FIT_SIGNATURE
-                    hash {
-                        algo = "sha256";
-                    };
-#endif
-                };
+//                optee {
+//                    description = "OP-TEE";
+//                    data = /incbin/("../../../tee.bin");
+//                    type = "firmware";
+//                    arch = "arm64";
+//                    os = "tee";
+//                    compression = "none";
+//
+//                    load = <0x8400000>;
+//                    entry = <0x8400000>;
+//#ifdef CONFIG_SPL_FIT_SIGNATURE
+//                    hash {
+//                        algo = "sha256";
+//                    };
+//#endif
+//                };
 
                 @fdt-SEQ {
                     description = "fdt-NAME";
