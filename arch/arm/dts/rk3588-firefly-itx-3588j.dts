@@ -208,7 +208,14 @@
 		vin-supply = <&vcc5v0_sys>;
 	};
 
-
+	vcc_fan_pwr_en: vcc-fan-pwr-en-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_fan_pwr_en";
+		regulator-boot-on;
+		regulator-always-on;
+		enable-active-high;
+		gpio = <&pca9555 PCA_IO1_3 GPIO_ACTIVE_HIGH>;  //PCA_IO 13
+	};
 };
 
 &sdmmc {
@@ -466,9 +473,9 @@
 };
 
 // pca9555
-//&pca9555 {
-//	status = "okay";
-//};
+&pca9555 {
+	status = "okay";
+};
 
 // rtc
 //&hym8563 {
@@ -588,12 +595,13 @@
 			rockchip,pins = <0 RK_PD3 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
+
 };
 
 &pwm15 {
-	pinctrl-0 = <&pwm15m0_pins>;
+	pinctrl-0 = <&pwm15m2_pins>;
 	pinctrl-names = "default";
-	status = "disabled";
+	status = "okay";
 };
 
 // Successive Approximation Register (SAR) A/D Converter
@@ -1352,11 +1360,13 @@
 
 // serial ports
 // RS232 on the board (FC10 connector)
-&uart0 {
+&uart0{
+	pinctrl-0 = <&uart0m2_xfer>;
 	status = "okay";
 };
 // RS485 on the board (FC10 connector)
-&uart1 {
+&uart1{
+	pinctrl-0 = <&uart1m1_xfer>;
 	status = "okay";
 };
 // debug port / serial console
