@@ -439,6 +439,7 @@
 				/* gmac1_mdc */
 				<3 RK_PC2 1 &pcfg_pull_none>,
 				/* gmac1_mdio */
+			    // RK_PC3		19
 				<3 RK_PC3 1 &pcfg_pull_none>;
 		};
 
@@ -2347,6 +2348,8 @@
 		pwm15m0_pins: pwm15m0-pins {
 			rockchip,pins =
 				/* pwm15_ir_m0 */
+				// RK_PC3 = 19
+				// RK_FUNC_GPIO = 0
 				<3 RK_PC3 11 &pcfg_pull_none>;
 		};
 

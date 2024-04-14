@@ -49,7 +49,6 @@
 #define RK_PD6		30
 #define RK_PD7		31
 
-#define RK_FUNC_GPIO	0
 #define PCA_IO0_0          0
 #define PCA_IO0_1          1
 #define PCA_IO0_2          2
@@ -67,6 +66,7 @@
 #define PCA_IO1_6          14
 #define PCA_IO1_7          15
 
+#define RK_FUNC_GPIO	0
 #define RK_FUNC_1	1
 #define RK_FUNC_2	2
 #define RK_FUNC_3	3

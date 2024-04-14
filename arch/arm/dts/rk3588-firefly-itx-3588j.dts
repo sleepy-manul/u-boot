@@ -12,15 +12,17 @@
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/soc/rockchip-system-status.h>
 #include "rk3588.dtsi"
+#include "rk3588-firefly-itx-3588j-i2c6.dtsi"
 #include "rk3588-firefly-itx-3588j-opp-tables.dtsi"
-#include "rk3588-firefly-itx-3588-video.dtsi"
+#include "rk3588-firefly-itx-3588j-video.dtsi"
 
 //include "rk3588-firefly-itx-cam-8ms1m.dtsi"
 //include "rk3588-firefly-itx-cam-2ms2m.dtsi"
 
 / {
 	model = "Firefly ITX-3588J HDMI(Linux)";
-	compatible = "rockchip,rk3588-firefly-itx-3588j", "rockchip,rk3588";
+	bootargs = "irqchip.gicv3_pseudo_nmi=0 coherent_pool=1m cgroup_enable=memory swapaccount=1 net.ifnames=0";
+	compatible = "firefly,rk3588-itx-3588j", "rockchip,rk3588";
 
 	aliases {
 		ethernet0 = &gmac0;
@@ -41,7 +43,7 @@
 		devfreq-events = <&dfi>;
 		clocks = <&scmi_clk 4>;
 		clock-names = "dmc_clk";
-		operating-points-v2 = <&dmc_opp_table>;
+		operating-points-v2 = <&opp_table_dmc>;
 		upthreshold = <40>;
 		downdifferential = <20>;
 		mem-supply = <&vdd_log_s0>;
@@ -112,12 +114,22 @@
 		vin-supply = <&avcc_1v8_s0>;
 	};
 
+	vcc_sata_pwr_en: vcc-sata-pwr-en-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_sata_pwr_en";
+		regulator-boot-on;
+		regulator-always-on;
+		enable-active-high;
+		status = "disabled";
+		gpio = <&pca9555 PCA_IO1_2 GPIO_ACTIVE_HIGH>;  //PCA_IO 12
+	};
+
 	vbus5v0_typec_pwr_en: vbus5v0-typec-pwr-en-regulator {
 		compatible = "regulator-fixed";
 		regulator-name = "vbus5v0_typec_pwr_en";
 		enable-active-high;
 		status = "disabled";
-		gpio = <&pca9555 PCA_IO1_4 GPIO_ACTIVE_HIGH>;  //PCA_IO 14
+		gpio = <&pca9555 12 GPIO_ACTIVE_HIGH>;  //PCA_IO 14
 	};
 
 	vcc12v_dcin: vcc12v-dcin-regulator {
@@ -135,7 +147,7 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 		enable-active-high;
-		gpios = <&gpio3 RK_PC3 GPIO_ACTIVE_HIGH>;
+		gpios = <&gpio2 RK_PC5 GPIO_ACTIVE_HIGH>;
 		startup-delay-us = <5000>;
 		vin-supply = <&vcc12v_dcin>;
 		pinctrl-names = "default";
@@ -184,6 +196,16 @@
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
 		vin-supply = <&vcc5v0_usbdcin>;
+	};
+
+	vcc_1v1_nldo_s3: vcc-1v1-nldo-s3-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_1v1_nldo_s3";
+		regulator-always-on;
+		regulator-boot-on;
+		regulator-min-microvolt = <1100000>;
+		regulator-max-microvolt = <1100000>;
+		vin-supply = <&vcc5v0_sys>;
 	};
 
 
@@ -266,7 +288,7 @@
 	status = "okay";
 };
 
-// gamc0
+// gamc0, a.k.a. ethernet0
 &gmac0 {
 	clock_in_out = "output";
 	phy-handle = <&rgmii_phy0>;
@@ -286,6 +308,17 @@
 	status = "okay";
 };
 
+// from: https://wiki.t-firefly.com/en/Core-3588J/usage_ethernet.html
+&gmac0_tx_bus2 {
+	rockchip,pins =
+	/* gmac0_txd0 */
+			<2 RK_PB6 1 &pcfg_pull_up_drv_level_6>,
+	/* gmac0_txd1 */
+			<2 RK_PB7 1 &pcfg_pull_up_drv_level_6>,
+	/* gmac0_txen */
+			<2 RK_PC0 1 &pcfg_pull_none>;
+};
+
 &mdio0 {
 	rgmii_phy0: ethernet-phy@1 {
 		// RTL8211F
@@ -295,29 +328,31 @@
 		pinctrl-0 = <&rtl8211f_rst>;
 		reset-assert-us = <20000>;
 		reset-deassert-us = <100000>;
+		// RK_PB3		11 -> Pin 4-11
 		reset-gpios = <&gpio4 RK_PB3 GPIO_ACTIVE_LOW>;
 	};
 };
 
+// from: https://wiki.t-firefly.com/en/Core-3588J/usage_ethernet.html
 &gmac0_rgmii_bus {
 	rockchip,pins =
-	// gmac0_rxd2
+	/* gmac0_rxd2 */
 			<2 RK_PA6 1 &pcfg_pull_none>,
-	// gmac0_rxd3
+	/* gmac0_rxd3 */
 			<2 RK_PA7 1 &pcfg_pull_none>,
-	// gmac0_txd2
+	/* gmac0_txd2 */
 			<2 RK_PB1 1 &pcfg_pull_up_drv_level_6>,
-	// gmac0_txd3
+	/* gmac0_txd3 */
 			<2 RK_PB2 1 &pcfg_pull_up_drv_level_6>;
 };
-
-// gmac1
+// gmac1, a.k.a. ethernet1
 &gmac1 {
 	// Use rgmii-rxid mode to disable rx delay inside Soc
 	phy-mode = "rgmii-rxid";
 	phy-handle = <&rgmii_phy1>;
 	clock_in_out = "output";
 
+	// RK_PB7		15
 	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
 	snps,reset-active-low;
 	// Reset time is 20ms, 100ms for rtl8211f
@@ -343,28 +378,32 @@
 		pinctrl-0 = <&rtl8211f_rst>;
 		reset-assert-us = <15000>;
 		reset-deassert-us = <50000>;
-		reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
+		/* The pin seems correct, but if the network card is initialised by U-Boot during EFI Boot
+		 * (triggered by grub2-efi?), and the Linux kernel resets it again, it seems to cause a crash.
+		 * ("cannot initialise MDIO") */
+		// reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
 	};
 };
 
 &gmac1_tx_bus2 {
 	rockchip,pins =
-	// gmac1_txd0
+	/* gmac1_txd0 */
 			<3 RK_PB3 1 &pcfg_pull_up_drv_level_6>,
-	// gmac1_txd1
+	/* gmac1_txd1 */
 			<3 RK_PB4 1 &pcfg_pull_up_drv_level_6>,
-	// gmac1_txen
+	/* gmac1_txen */
 			<3 RK_PB5 1 &pcfg_pull_none>;
 };
+
 &gmac1_rgmii_bus {
 	rockchip,pins =
-	// gmac1_rxd2
+	/* gmac1_rxd2 */
 			<3 RK_PA2 1 &pcfg_pull_none>,
-	// gmac1_rxd3
+	/* gmac1_rxd3 */
 			<3 RK_PA3 1 &pcfg_pull_none>,
-	// gmac1_txd2
+	/* gmac1_txd2 */
 			<3 RK_PA0 1 &pcfg_pull_up_drv_level_6>,
-	// gmac1_txd3
+	/* gmac1_txd3 */
 			<3 RK_PA1 1 &pcfg_pull_up_drv_level_6>;
 };
 
@@ -395,10 +434,11 @@
 &sata0 {
 	status = "okay";
 };
-//&vcc_sata_pwr_en {
-//	status = "okay";
-//	gpio = <&pca9555 PCA_IO1_2 GPIO_ACTIVE_HIGH>;  //PCA_IO 12
-//};
+
+&vcc_sata_pwr_en {
+	status = "okay";
+	gpio = <&pca9555 PCA_IO1_2 GPIO_ACTIVE_HIGH>;  //PCA_IO 12
+};
 
 // usb power
 //&vcc5v0_host {
@@ -453,7 +493,7 @@
 	leds {
 		leds_gpio: leds-gpio {
 			// led_power
-			rockchip,pins = <1 11 RK_FUNC_GPIO &pcfg_pull_none>;
+			rockchip,pins = <1 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
 
@@ -471,6 +511,7 @@
 
 	rtl8211f {
 		rtl8211f_rst: rtl8211f-rst {
+			// RK_PB3		11
 			rockchip,pins = <4 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
@@ -529,7 +570,10 @@
 		};
 
 		vcc3v3_pcie30_en: vcc3v3-pcie30-en {
-			rockchip,pins = <3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_none>;
+			// RK_PC3 = 19
+			// RK_FUNC_GPIO = 0
+			//<&gpio2 RK_PC5 GPIO_ACTIVE_HIGH>
+			rockchip,pins = <2 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
 
@@ -539,10 +583,17 @@
 		};
 	};
 
+	usb-typec {
+		usbc0_int: usbc0-int {
+			rockchip,pins = <0 RK_PD3 RK_FUNC_GPIO &pcfg_pull_up>;
+		};
+	};
 };
 
-&pwm2 {
-	status = "okay";
+&pwm15 {
+	pinctrl-0 = <&pwm15m0_pins>;
+	pinctrl-names = "default";
+	status = "disabled";
 };
 
 // Successive Approximation Register (SAR) A/D Converter
@@ -555,22 +606,22 @@
 	status = "okay";
 	assigned-clocks = <&cru CLK_SPI2>;
 	assigned-clock-rates = <200000000>;
-	num-cs = <2>;
+	num-cs = <1>;
 
 	pmic@0 {
 		compatible = "rockchip,rk806";
+		spi-max-frequency = <1000000>;
 		reg = <0x0>;
-		#gpio-cells = <2>;
-		gpio-controller;
+
 		interrupt-parent = <&gpio0>;
 		interrupts = <7 IRQ_TYPE_LEVEL_LOW>;
+
+		pinctrl-names = "default", "pmic-power-off";
 		pinctrl-0 = <&pmic_pins>, <&rk806_dvs1_null>,
 					<&rk806_dvs2_null>, <&rk806_dvs3_null>;
+		pinctrl-1 = <&rk806_dvs1_pwrdn>;
 
 		system-power-controller;
-
-		pinctrl-names = "default";
-		spi-max-frequency = <1000000>;
 
 		vcc1-supply = <&vcc5v0_sys>;
 		vcc2-supply = <&vcc5v0_sys>;
@@ -588,9 +639,27 @@
 		vcc14-supply = <&vcc_1v1_nldo_s3>;
 		vcca-supply = <&vcc5v0_sys>;
 
+		gpio-controller;
+		#gpio-cells = <2>;
+
 		rk806_dvs1_null: dvs1-null-pins {
-			pins = "gpio_pwrctrl1";
+			pins = "gpio_pwrctrl2";
 			function = "pin_fun0";
+		};
+
+		rk806_dvs1_slp: dvs1-slp-pins {
+			pins = "gpio_pwrctrl1";
+			function = "pin_fun1";
+		};
+
+		rk806_dvs1_pwrdn: dvs1-pwrdn-pins {
+			pins = "gpio_pwrctrl1";
+			function = "pin_fun2";
+		};
+
+		rk806_dvs1_rst: dvs1-rst-pins {
+			pins = "gpio_pwrctrl1";
+			function = "pin_fun3";
 		};
 
 		rk806_dvs2_null: dvs2-null-pins {
@@ -598,11 +667,60 @@
 			function = "pin_fun0";
 		};
 
+		rk806_dvs2_slp: dvs2-slp-pins {
+			pins = "gpio_pwrctrl2";
+			function = "pin_fun1";
+		};
+
+		rk806_dvs2_pwrdn: dvs2-pwrdn-pins {
+			pins = "gpio_pwrctrl2";
+			function = "pin_fun2";
+		};
+
+		rk806_dvs2_rst: dvs2-rst-pins {
+			pins = "gpio_pwrctrl2";
+			function = "pin_fun3";
+		};
+
+		rk806_dvs2_dvs: dvs2-dvs-pins {
+			pins = "gpio_pwrctrl2";
+			function = "pin_fun4";
+		};
+
+		rk806_dvs2_gpio: dvs2-gpio-pins {
+			pins = "gpio_pwrctrl2";
+			function = "pin_fun5";
+		};
+
 		rk806_dvs3_null: dvs3-null-pins {
 			pins = "gpio_pwrctrl3";
 			function = "pin_fun0";
 		};
 
+		rk806_dvs3_slp: dvs3-slp-pins {
+			pins = "gpio_pwrctrl3";
+			function = "pin_fun1";
+		};
+
+		rk806_dvs3_pwrdn: dvs3-pwrdn-pins {
+			pins = "gpio_pwrctrl3";
+			function = "pin_fun2";
+		};
+
+		rk806_dvs3_rst: dvs3-rst-pins {
+			pins = "gpio_pwrctrl3";
+			function = "pin_fun3";
+		};
+
+		rk806_dvs3_dvs: dvs3-dvs-pins {
+			pins = "gpio_pwrctrl3";
+			function = "pin_fun4";
+		};
+
+		rk806_dvs3_gpio: dvs3-gpio-pins {
+			pins = "gpio_pwrctrl3";
+			function = "pin_fun5";
+		};
 
 		regulators {
 			vdd_gpu_s0: dcdc-reg1 {
@@ -713,16 +831,6 @@
 				regulator-state-mem {
 					regulator-on-in-suspend;
 				};
-			};
-
-			vcc_1v1_nldo_s3: vcc-1v1-nldo-s3-regulator {
-				compatible = "regulator-fixed";
-				regulator-name = "vcc_1v1_nldo_s3";
-				regulator-always-on;
-				regulator-boot-on;
-				regulator-min-microvolt = <1100000>;
-				regulator-max-microvolt = <1100000>;
-				vin-supply = <&vcc5v0_sys>;
 			};
 
 			avcc_1v8_s0: pldo-reg1 {
@@ -1194,14 +1302,53 @@
 	status = "okay";
 };
 
-&cpu_l0 { operating-points-v2 = <&cluster0_opp_table>; };
-&cpu_l1 { operating-points-v2 = <&cluster0_opp_table>; };
-&cpu_l2 { operating-points-v2 = <&cluster0_opp_table>; };
-&cpu_l3 { operating-points-v2 = <&cluster0_opp_table>; };
-&cpu_b0 { operating-points-v2 = <&cluster1_opp_table>; };
-&cpu_b1 { operating-points-v2 = <&cluster1_opp_table>; };
-&cpu_b2 { operating-points-v2 = <&cluster2_opp_table>; };
-&cpu_b3 { operating-points-v2 = <&cluster2_opp_table>; };
+&usb_host0_xhci {
+	usb-role-switch;
+	dr_mode = "host";
+	status = "okay";
+
+	port {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		usb_host0_xhci_drd_sw: endpoint {
+			remote-endpoint = <&usbc0_hs>;
+		};
+	};
+};
+
+&usbdp_phy0 {
+	orientation-switch;
+	mode-switch;
+	sbu1-dc-gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
+	sbu2-dc-gpios = <&gpio4 RK_PA7 GPIO_ACTIVE_HIGH>;
+	status = "okay";
+
+	port {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		usbdp_phy0_typec_ss: endpoint@0 {
+			reg = <0>;
+			remote-endpoint = <&usbc0_ss>;
+		};
+
+		usbdp_phy0_typec_sbu: endpoint@1 {
+			reg = <1>;
+			remote-endpoint = <&usbc0_sbu>;
+		};
+	};
+};
+
+
+&cpu_l0 { operating-points-v2 = <&opp_table_cluster0>; };
+&cpu_l1 { operating-points-v2 = <&opp_table_cluster0>; };
+&cpu_l2 { operating-points-v2 = <&opp_table_cluster0>; };
+&cpu_l3 { operating-points-v2 = <&opp_table_cluster0>; };
+&cpu_b0 { operating-points-v2 = <&opp_table_cluster1>; };
+&cpu_b1 { operating-points-v2 = <&opp_table_cluster1>; };
+&cpu_b2 { operating-points-v2 = <&opp_table_cluster2>; };
+&cpu_b3 { operating-points-v2 = <&opp_table_cluster2>; };
 
 // serial ports
 // RS232 on the board (FC10 connector)
@@ -1231,3 +1378,4 @@
 &tsadc {
 	status = "okay";
 };
+
