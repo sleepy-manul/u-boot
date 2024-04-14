@@ -116,3 +116,6 @@ __pycache__
 
 # Clang's compilation database file
 /compile_commands.json
+
+# auto-generated source code / configuration
+/keep-syms-lto.c
