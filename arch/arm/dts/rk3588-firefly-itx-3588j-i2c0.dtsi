@@ -1,0 +1,8 @@
+
+#include <dt-bindings/usb/pd.h>
+
+&i2c0 {
+    status = "okay";
+    pinctrl-names = "default";
+    pinctrl-0 = <&i2c0m2_xfer>;
+};

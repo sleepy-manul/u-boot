@@ -12,6 +12,8 @@
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/soc/rockchip-system-status.h>
 #include "rk3588.dtsi"
+#include "rk3588-firefly-itx-3588j-i2c0.dtsi"
+#include "rk3588-firefly-itx-3588j-i2c3.dtsi"
 #include "rk3588-firefly-itx-3588j-i2c6.dtsi"
 #include "rk3588-firefly-itx-3588j-opp-tables.dtsi"
 #include "rk3588-firefly-itx-3588j-video.dtsi"

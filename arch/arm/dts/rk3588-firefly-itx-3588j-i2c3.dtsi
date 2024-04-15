@@ -9,11 +9,11 @@
         rockchip,bit-set-to-disable;
     };
 
+/*
     es8388_sound: es8388-sound {
         status = "okay";
-        compatible = "firefly,multicodecs-card";
+        compatible = "everest,es8388";
         firefly,not-use-dapm;
-        rockchip,card-name = "rockchip-es8388";
         hp-det-gpio = <&gpio1 RK_PC4 GPIO_ACTIVE_LOW>;
         io-channels = <&saradc 3>;
         io-channel-names = "adc-detect";
@@ -40,22 +40,27 @@
         pinctrl-names = "default";
         pinctrl-0 = <&hp_det>;
     };
-
+*/
 
 };
 
 &i2c3 {
     status = "okay";
-    es8388: es8388@11 {
+    es8388: audio-codec@11 {
         status = "okay";
         #sound-dai-cells = <0>;
-        compatible = "everest,es8388", "everest,es8323";
+        compatible = "everest,es8388";
         reg = <0x11>;
         clocks = <&mclkout_i2s0>;
         clock-names = "mclk";
-        assigned-clocks = <&mclkout_i2s0>;
-        assigned-clock-rates = <12288000>;
+        //assigned-clocks = <&mclkout_i2s0>;
+        //assigned-clock-rates = <12288000>;
         pinctrl-names = "default";
         pinctrl-0 = <&i2s0_mclk>;
+        AVDD-supply = <&avcc_1v8_codec_s0>;
+        DVDD-supply = <&avcc_1v8_codec_s0>;
+        HPVDD-supply = <&vcc_3v3_s3>;
+        PVDD-supply = <&vcc_3v3_s3>;
     };
+
 };
