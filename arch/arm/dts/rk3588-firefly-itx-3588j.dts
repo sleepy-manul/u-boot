@@ -477,13 +477,6 @@
 	status = "okay";
 };
 
-// rtc
-//&hym8563 {
-//	interrupt-parent = <&gpio0>;
-//	interrupts = <RK_PB0 IRQ_TYPE_LEVEL_LOW>;
-//	status = "okay";
-//};
-
 &vbus5v0_typec_pwr_en {
 	status = "okay";
 	gpio = <&pca9555 PCA_IO1_4 GPIO_ACTIVE_HIGH>;  //PCA_IO 14
@@ -1276,6 +1269,11 @@
 	status = "okay";
 };
 
+&u2phy0_otg {
+	rockchip,typec-vbus-det;
+	status = "okay";
+};
+
 &u2phy2 {
 	status = "okay";
 };
@@ -1346,6 +1344,11 @@
 			remote-endpoint = <&usbc0_sbu>;
 		};
 	};
+};
+
+
+&usbdp_phy0_u3 {
+	status = "okay";
 };
 
 

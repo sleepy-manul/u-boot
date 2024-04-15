@@ -231,8 +231,6 @@
 
 &u2phy0_otg {
     bootph-all;
-    rockchip,typec-vbus-det;
-    status = "okay";
 };
 
 &u2phy1 {
@@ -326,10 +324,6 @@
             remote-endpoint = <&usbc0_sbu>;
         };
     };
-};
-
-&usbdp_phy0_u3 {
-    status = "okay";
 };
 
 &usb_host0_xhci {
