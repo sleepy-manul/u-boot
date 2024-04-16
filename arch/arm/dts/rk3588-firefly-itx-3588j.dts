@@ -952,7 +952,8 @@
 };
 
 &u2phy0_otg {
-	rockchip,typec-vbus-det;
+	// Attribute is not in the schema - obsolete?
+	// rockchip,typec-vbus-det;
 	status = "okay";
 };
 
