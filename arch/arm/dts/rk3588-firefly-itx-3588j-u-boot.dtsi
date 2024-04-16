@@ -4,6 +4,7 @@
  */
 
 #include "rk3588-u-boot.dtsi"
+#include "rk3588-firefly-itx-3588j-i2c0.dtsi"
 #include "rk3588-firefly-itx-3588j-i2c3.dtsi"
 #include "rk3588-firefly-itx-3588j-i2c6.dtsi"
 
@@ -178,28 +179,7 @@
 
 &sfc {
     bootph-pre-ram;
-    status = "okay";
-
-    #address-cells = <1>;
-    #size-cells = <0>;
-    spi_nand: flash@0 {
-        bootph-pre-ram;
-        compatible = "spi-nand";
-        reg = <0>;
-        spi-tx-bus-width = <1>;
-        spi-rx-bus-width = <4>;
-        spi-max-frequency = <80000000>;
-    };
-
-    spi_nor: flash@1 {
-        bootph-pre-ram;
-        compatible = "jedec,spi-nor";
-        label = "sfc_nor";
-        reg = <0>;
-        spi-tx-bus-width = <1>;
-        spi-rx-bus-width = <4>;
-        spi-max-frequency = <80000000>;
-    };
+    u-boot,spl-sfc-no-dma;
 };
 
 &saradc {
@@ -350,4 +330,3 @@
     interrupt-parent = <&gpio0>;
     interrupts = <RK_PD3 IRQ_TYPE_LEVEL_LOW>;
 };
-

@@ -76,46 +76,6 @@
 		cooling-levels = <0 95 145 195 255>;
 	};
 
-	pcie20_avdd0v85: pcie20-avdd0v85-regulator {
-		compatible = "regulator-fixed";
-		regulator-name = "pcie20_avdd0v85";
-		regulator-always-on;
-		regulator-boot-on;
-		regulator-min-microvolt = <850000>;
-		regulator-max-microvolt = <850000>;
-		vin-supply = <&vdd_0v85_s0>;
-	};
-
-	pcie20_avdd1v8: pcie20-avdd1v8-regulator {
-		compatible = "regulator-fixed";
-		regulator-name = "pcie20_avdd1v8";
-		regulator-always-on;
-		regulator-boot-on;
-		regulator-min-microvolt = <1800000>;
-		regulator-max-microvolt = <1800000>;
-		vin-supply = <&avcc_1v8_s0>;
-	};
-
-	pcie30_avdd0v75: pcie30-avdd0v75-regulator {
-		compatible = "regulator-fixed";
-		regulator-name = "pcie30_avdd0v75";
-		regulator-always-on;
-		regulator-boot-on;
-		regulator-min-microvolt = <750000>;
-		regulator-max-microvolt = <750000>;
-		vin-supply = <&avdd_0v75_s0>;
-	};
-
-	pcie30_avdd1v8: pcie30-avdd1v8-regulator {
-		compatible = "regulator-fixed";
-		regulator-name = "pcie30_avdd1v8";
-		regulator-always-on;
-		regulator-boot-on;
-		regulator-min-microvolt = <1800000>;
-		regulator-max-microvolt = <1800000>;
-		vin-supply = <&avcc_1v8_s0>;
-	};
-
 	vcc_sata_pwr_en: vcc-sata-pwr-en-regulator {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc_sata_pwr_en";
@@ -131,7 +91,7 @@
 		regulator-name = "vbus5v0_typec_pwr_en";
 		enable-active-high;
 		status = "disabled";
-		gpio = <&pca9555 12 GPIO_ACTIVE_HIGH>;  //PCA_IO 14
+		gpio = <&pca9555 PCA_IO1_4 GPIO_ACTIVE_HIGH>;  //PCA_IO 14
 	};
 
 	vcc12v_dcin: vcc12v-dcin-regulator {
@@ -164,10 +124,11 @@
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
 		enable-active-high;
-		gpio = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
+		gpio = <&pca9555 PCA_IO0_5 GPIO_ACTIVE_HIGH>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&vcc5v0_host_en>;
 		vin-supply = <&vcc5v0_usb>;
+		status = "okay";
 	};
 
 	vcc5v0_sys: vcc5v0-sys-regulator {
@@ -287,9 +248,26 @@
 	cpu-supply = <&vdd_cpu_lit_s0>;
 };
 
-&i2c2 {
+&i2c1 {
 	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c1m2_xfer>;
+};
 
+&i2c2 {	status = "okay"; };
+
+&i2c4 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c4m3_xfer>;
+};
+
+&i2c7 {	status = "okay"; };
+
+&i2c8 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c8m2_xfer>;
 };
 
 &uart2 {
@@ -449,25 +427,6 @@
 	gpio = <&pca9555 PCA_IO1_2 GPIO_ACTIVE_HIGH>;  //PCA_IO 12
 };
 
-// usb power
-//&vcc5v0_host {
-//	gpio = <&pca9555 PCA_IO0_5 GPIO_ACTIVE_HIGH>;
-//	vin-supply = <&vcc5v0_usb>;
-//	status = "okay";
-//};
-//&vcc_hub_reset {
-//	status = "okay";
-//	gpio = <&pca9555 PCA_IO0_4 GPIO_ACTIVE_HIGH>;  //PCA_IO 04
-//};
-//&vcc_hub3_reset {
-//	status = "okay";
-//	gpio = <&pca9555 PCA_IO0_6 GPIO_ACTIVE_HIGH>;  //PCA_IO 06
-//};
-//&vcc5v0_host3 {
-//	gpio = <&pca9555 PCA_IO0_7 GPIO_ACTIVE_HIGH>;  //PCA_IO 07
-//	status = "okay";
-//};
-
 // i2c6
 &i2c6 {
 	clock-frequency = <400000>; // For others Display Port Screen
@@ -581,7 +540,7 @@
 
 	usb {
 		vcc5v0_host_en: vcc5v0-host-en {
-			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
+			rockchip,pins = <1 RK_PB1 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
 
@@ -609,6 +568,7 @@
 	status = "okay";
 	assigned-clocks = <&cru CLK_SPI2>;
 	assigned-clock-rates = <200000000>;
+	pinctrl-0 = <&spi2m2_cs0 &spi2m2_pins>;
 	num-cs = <1>;
 
 	pmic@0 {
@@ -638,7 +598,7 @@
 		vcc10-supply = <&vcc5v0_sys>;
 		vcc11-supply = <&vcc_2v0_pldo_s3>;
 		vcc12-supply = <&vcc5v0_sys>;
-		vcc13-supply = <&vcc5v0_sys>;
+		vcc13-supply = <&vcc_1v1_nldo_s3>;
 		vcc14-supply = <&vcc_1v1_nldo_s3>;
 		vcca-supply = <&vcc5v0_sys>;
 
@@ -733,6 +693,7 @@
 				regulator-ramp-delay = <12500>;
 				regulator-name = "vdd_gpu_s0";
 				regulator-enable-ramp-delay = <400>;
+				status = "okay";
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
@@ -763,8 +724,6 @@
 				};
 			};
 
-
-
 			vdd_vdenc_s0: dcdc-reg4 {
 				regulator-always-on;
 				regulator-boot-on;
@@ -785,10 +744,10 @@
 				regulator-ramp-delay = <12500>;
 				regulator-enable-ramp-delay = <400>;
 				regulator-name = "vdd_gpu_mem_s0";
+				status = "okay";
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
-
 			};
 
 			vdd_npu_mem_s0: dcdc-reg6 {
@@ -900,7 +859,6 @@
 				};
 			};
 
-
 			vccio_sd_s0: pldo-reg5 {
 				regulator-always-on;
 				regulator-boot-on;
@@ -986,41 +944,7 @@
 		};
 	};
 
-	vdd_cpu_big1_s0: vdd_cpu_big1_mem_s0: regulator@43 {
-		compatible = "rockchip,rk8602";
-		regulator-compatible = "rk8602-reg";
-		reg = <0x43>;
-		regulator-name = "vdd_cpu_big1_s0";
-		regulator-min-microvolt = <550000>;
-		regulator-max-microvolt = <1050000>;
-		regulator-always-on;
-		regulator-boot-on;
-		regulator-ramp-delay = <2300>;
-		vin-supply = <&vcc5v0_sys>;
-		rockchip,suspend-voltage-selector = <1>;
 
-		regulator-state-mem {
-			regulator-off-in-suspend;
-		};
-
-	};
-
-	vdd_cpu_big0_s0: vdd_cpu_big0_mem_s0: regulator@42 {
-		compatible = "rockchip,rk8602";
-		reg = <0x42>;
-		vin-supply = <&vcc5v0_sys>;
-		regulator-compatible = "rk860x-reg";
-		regulator-name = "vdd_cpu_big0_s0";
-		regulator-min-microvolt = <550000>;
-		regulator-max-microvolt = <1050000>;
-		regulator-ramp-delay = <2300>;
-		rockchip,suspend-voltage-selector = <1>;
-		regulator-boot-on;
-		regulator-always-on;
-		regulator-state-mem {
-			regulator-off-in-suspend;
-		};
-	};
 };
 
 &sata0 {
@@ -1104,11 +1028,9 @@
 	};
 };
 
-
 &usbdp_phy0_u3 {
 	status = "okay";
 };
-
 
 &cpu_l0 { operating-points-v2 = <&opp_table_cluster0>; };
 &cpu_l1 { operating-points-v2 = <&opp_table_cluster0>; };
@@ -1121,20 +1043,23 @@
 
 // serial ports
 // RS232 on the board (FC10 connector)
-&uart0{
+&uart0 {
 	pinctrl-0 = <&uart0m2_xfer>;
 	status = "okay";
 };
+
 // RS485 on the board (FC10 connector)
-&uart1{
+&uart1 {
 	pinctrl-0 = <&uart1m1_xfer>;
 	status = "okay";
 };
+
 // debug port / serial console
 &uart2 {
 	pinctrl-0 = <&uart2m0_xfer>;
 	status = "okay";
 };
+
 // Bluetooth part of the AP6275 chip
 &uart6 {
 	pinctrl-names = "default";
@@ -1148,4 +1073,29 @@
 // thermal sensor analog / digital converter (CPU temperatures etc.)
 &tsadc {
 	status = "okay";
+};
+
+&sfc {
+	 status = "okay";
+
+	 #address-cells = <1>;
+	 #size-cells = <0>;
+	 spi_nand: flash@0 {
+		 bootph-pre-ram;
+		 compatible = "spi-nand";
+		 reg = <0>;
+		 spi-tx-bus-width = <1>;
+		 spi-rx-bus-width = <4>;
+		 spi-max-frequency = <80000000>;
+	 };
+
+	 spi_nor: flash@1 {
+		 bootph-pre-ram;
+		 compatible = "jedec,spi-nor";
+		 label = "sfc_nor";
+		 reg = <0>;
+		 spi-tx-bus-width = <1>;
+		 spi-rx-bus-width = <4>;
+		 spi-max-frequency = <80000000>;
+	 };
 };

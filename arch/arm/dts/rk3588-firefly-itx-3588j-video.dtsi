@@ -326,17 +326,15 @@
     };
 
     gpu: gpu@fb000000 {
-        compatible = "rockchip,rk3588-mali";
+        compatible = "rockchip,rk3588-mali", "arm,mali-valhall-csf";
         reg = <0x0 0xfb000000 0x0 0x200000>;
-        interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH 0>,
+        interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH 0>,
                      <GIC_SPI 93 IRQ_TYPE_LEVEL_HIGH 0>,
-                     <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH 0>;
-        interrupt-names = "GPU", "MMU", "JOB";
-
-        clocks = <&scmi_clk SCMI_CLK_GPU>, <&cru CLK_GPU_COREGROUP>,
-                 <&cru CLK_GPU_STACKS>, <&cru CLK_GPU>;
-        clock-names = "clk_mali", "clk_gpu_coregroup",
-                      "clk_gpu_stacks", "clk_gpu";
+                     <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH 0>;
+        interrupt-names = "job", "mmu", "gpu";
+        clock-names = "core", "coregroup", "stacks";
+        clocks = <&cru CLK_GPU>, <&cru CLK_GPU_COREGROUP>,
+                 <&cru CLK_GPU_STACKS>;
         assigned-clocks = <&scmi_clk SCMI_CLK_GPU>;
         assigned-clock-rates = <200000000>;
         power-domains = <&power RK3588_PD_GPU>;
@@ -346,6 +344,9 @@
 
         upthreshold = <30>;
         downdifferential = <10>;
+
+        mali-supply = <&vdd_gpu_s0>;
+        sram-supply = <&vdd_gpu_mem_s0>;
 
         status = "disabled";
     };
@@ -1504,7 +1505,5 @@
 };
 
 &gpu {
-    mali-supply = <&vdd_gpu_s0>;
-    mem-supply = <&vdd_gpu_mem_s0>;
     status = "okay";
 };
