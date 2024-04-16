@@ -321,10 +321,6 @@
     };
 };
 
-&usb_host1_xhci {
-    status = "okay";
-};
-
 &usbc0 {
     status = "okay";
     interrupt-parent = <&gpio0>;

@@ -443,6 +443,12 @@
 	gpio = <&pca9555 PCA_IO1_4 GPIO_ACTIVE_HIGH>;  //PCA_IO 14
 };
 
+&pcie2x1l0 {
+	reset-gpios = <&gpio1 RK_PB4 GPIO_ACTIVE_HIGH>;
+	rockchip,skip-scan-in-resume;
+	status = "okay";
+};
+
 // pinctrl
 &pinctrl {
 	dp {
@@ -1004,6 +1010,14 @@
 			remote-endpoint = <&usbc0_hs>;
 		};
 	};
+};
+
+&usb_host1_xhci {
+	status = "okay";
+};
+
+&usb_host2_xhci {
+	status = "okay";
 };
 
 &usbdp_phy0 {
