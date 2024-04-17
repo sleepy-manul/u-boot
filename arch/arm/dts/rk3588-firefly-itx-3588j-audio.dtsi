@@ -1,3 +1,9 @@
+
+
+&i2s5_8ch {
+    status = "okay";
+};
+
 / {
     mclkout_i2s0: mclkout-i2s0@fd58c318 {
         compatible = "rockchip,clk-out";

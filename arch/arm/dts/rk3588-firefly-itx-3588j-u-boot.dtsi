@@ -5,7 +5,7 @@
 
 #include "rk3588-u-boot.dtsi"
 #include "rk3588-firefly-itx-3588j-i2c0.dtsi"
-#include "rk3588-firefly-itx-3588j-i2c3.dtsi"
+#include "rk3588-firefly-itx-3588j-audio.dtsi"
 #include "rk3588-firefly-itx-3588j-i2c6.dtsi"
 
 / {
@@ -114,11 +114,6 @@
     status = "okay";
 };
 
-&psci {
-    bootph-all;
-    status = "okay";
-};
-
 // This was used in the BSP 2017 U-Boot. It offers accelerated
 // crypto performed in hardware, but the driver model DM_CRYPTO does
 // not exist anymore. Disabling it until someone(tm) can perform
@@ -172,10 +167,10 @@
     status = "okay";
 };*/
 
-&rng {
-    bootph-all;
-    status = "okay";
-};
+//&rng {
+//    bootph-all;
+//    status = "okay";
+//};
 
 &sfc {
     bootph-pre-ram;
@@ -272,57 +267,4 @@
 &pcfg_pull_none
 {
     bootph-pre-ram;
-};
-
-
-&usbdp_phy1 {
-    status = "okay";
-};
-
-&usbdp_phy1_u3 {
-    status = "okay";
-};
-
-&usbdp_phy0 {
-    orientation-switch;
-    mode-switch;
-    sbu1-dc-gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
-    sbu2-dc-gpios = <&gpio4 RK_PA7 GPIO_ACTIVE_HIGH>;
-    status = "okay";
-
-    port {
-        #address-cells = <1>;
-        #size-cells = <0>;
-
-        usbdp_phy0_typec_ss: endpoint@0 {
-            reg = <0>;
-            remote-endpoint = <&usbc0_ss>;
-        };
-
-        usbdp_phy0_typec_sbu: endpoint@1 {
-            reg = <1>;
-            remote-endpoint = <&usbc0_sbu>;
-        };
-    };
-};
-
-&usb_host0_xhci {
-    usb-role-switch;
-    dr_mode = "host";
-    status = "okay";
-
-    port {
-        #address-cells = <1>;
-        #size-cells = <0>;
-
-        usb_host0_xhci_drd_sw: endpoint {
-            remote-endpoint = <&usbc0_hs>;
-        };
-    };
-};
-
-&usbc0 {
-    status = "okay";
-    interrupt-parent = <&gpio0>;
-    interrupts = <RK_PD3 IRQ_TYPE_LEVEL_LOW>;
 };

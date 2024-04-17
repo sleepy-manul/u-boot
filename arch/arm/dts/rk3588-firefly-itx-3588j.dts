@@ -11,18 +11,21 @@
 #include <dt-bindings/pinctrl/rockchip.h>
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/soc/rockchip-system-status.h>
+
 #include "rk3588.dtsi"
 #include "rk3588-firefly-itx-3588j-i2c0.dtsi"
-#include "rk3588-firefly-itx-3588j-i2c3.dtsi"
+#include "rk3588-firefly-itx-3588j-accelerators.dtsi"
+#include "rk3588-firefly-itx-3588j-audio.dtsi"
 #include "rk3588-firefly-itx-3588j-i2c6.dtsi"
 #include "rk3588-firefly-itx-3588j-opp-tables.dtsi"
+#include "rk3588-firefly-itx-3588j-usb.dtsi"
 #include "rk3588-firefly-itx-3588j-video.dtsi"
 
 //include "rk3588-firefly-itx-cam-8ms1m.dtsi"
 //include "rk3588-firefly-itx-cam-2ms2m.dtsi"
 
 / {
-	model = "Firefly ITX-3588J HDMI(Linux)";
+	model = "Firefly ITX-3588J";
 	bootargs = "irqchip.gicv3_pseudo_nmi=0 coherent_pool=1m cgroup_enable=memory swapaccount=1 net.ifnames=0";
 	compatible = "firefly,rk3588-itx-3588j", "rockchip,rk3588";
 
@@ -45,7 +48,7 @@
 		devfreq-events = <&dfi>;
 		clocks = <&scmi_clk 4>;
 		clock-names = "dmc_clk";
-		operating-points-v2 = <&opp_table_dmc>;
+		operating-points-v2 = <&dmc_opp_table>;
 		upthreshold = <40>;
 		downdifferential = <20>;
 		mem-supply = <&vdd_log_s0>;
@@ -84,14 +87,6 @@
 		enable-active-high;
 		status = "disabled";
 		gpio = <&pca9555 PCA_IO1_2 GPIO_ACTIVE_HIGH>;  //PCA_IO 12
-	};
-
-	vbus5v0_typec_pwr_en: vbus5v0-typec-pwr-en-regulator {
-		compatible = "regulator-fixed";
-		regulator-name = "vbus5v0_typec_pwr_en";
-		enable-active-high;
-		status = "disabled";
-		gpio = <&pca9555 PCA_IO1_4 GPIO_ACTIVE_HIGH>;  //PCA_IO 14
 	};
 
 	vcc12v_dcin: vcc12v-dcin-regulator {
@@ -141,26 +136,6 @@
 		vin-supply = <&vcc12v_dcin>;
 	};
 
-	vcc5v0_usbdcin: vcc5v0-usbdcin-regulator {
-		compatible = "regulator-fixed";
-		regulator-name = "vcc5v0_usbdcin";
-		regulator-always-on;
-		regulator-boot-on;
-		regulator-min-microvolt = <5000000>;
-		regulator-max-microvolt = <5000000>;
-		vin-supply = <&vcc12v_dcin>;
-	};
-
-	vcc5v0_usb: vcc5v0-usb-regulator {
-		compatible = "regulator-fixed";
-		regulator-name = "vcc5v0_usb";
-		regulator-always-on;
-		regulator-boot-on;
-		regulator-min-microvolt = <5000000>;
-		regulator-max-microvolt = <5000000>;
-		vin-supply = <&vcc5v0_usbdcin>;
-	};
-
 	vcc_1v1_nldo_s3: vcc-1v1-nldo-s3-regulator {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc_1v1_nldo_s3";
@@ -183,7 +158,6 @@
 
 &sdmmc {
 	bus-width = <4>;
-	cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
 	cap-mmc-highspeed;
 	cap-sd-highspeed;
 	disable-wp;
@@ -191,7 +165,7 @@
 	no-sdio;
 	sd-uhs-sdr104;
 	max-frequency = <150000000>;
-	vmmc-supply = <&vcc_3v3_s3>;
+	//vmmc-supply = <&vcc_3v3_s3>;
 	vqmmc-supply = <&vccio_sd_s0>;
 	status = "okay";
 };
@@ -252,9 +226,29 @@
 	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2c1m2_xfer>;
+
+	vdd_npu_s0: vdd_npu_mem_s0: regulator@42 {
+		compatible = "rockchip,rk8602";
+		reg = <0x42>;
+		vin-supply = <&vcc5v0_sys>;
+		regulator-compatible = "rk860x-reg";
+		regulator-name = "vdd_npu_s0";
+		regulator-min-microvolt = <550000>;
+		regulator-max-microvolt = <950000>;
+		regulator-ramp-delay = <2300>;
+		rockchip,suspend-voltage-selector = <1>;
+		regulator-boot-on;
+		regulator-always-on;
+		regulator-state-mem {
+			regulator-off-in-suspend;
+		};
+	};
+
 };
 
-&i2c2 {	status = "okay"; };
+&i2c2 {
+	status = "okay";
+};
 
 &i2c4 {
 	status = "okay";
@@ -407,21 +401,19 @@
 	status = "okay";
 };
 
-
 &vcc3v3_pcie30 {
 	gpios = <&gpio2 RK_PC5 GPIO_ACTIVE_HIGH>;
 	startup-delay-us = <5000>;
 	status = "okay";
 };
 
-// sata pm
+// SATA
 &combphy0_ps {
 	status = "okay";
 };
 &sata0 {
 	status = "okay";
 };
-
 &vcc_sata_pwr_en {
 	status = "okay";
 	gpio = <&pca9555 PCA_IO1_2 GPIO_ACTIVE_HIGH>;  //PCA_IO 12
@@ -436,11 +428,6 @@
 // pca9555
 &pca9555 {
 	status = "okay";
-};
-
-&vbus5v0_typec_pwr_en {
-	status = "okay";
-	gpio = <&pca9555 PCA_IO1_4 GPIO_ACTIVE_HIGH>;  //PCA_IO 14
 };
 
 &pcie2x1l0 {
@@ -541,18 +528,6 @@
 			// RK_FUNC_GPIO = 0
 			//<&gpio2 RK_PC5 GPIO_ACTIVE_HIGH>
 			rockchip,pins = <2 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-
-	usb {
-		vcc5v0_host_en: vcc5v0-host-en {
-			rockchip,pins = <1 RK_PB1 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-
-	usb-typec {
-		usbc0_int: usbc0-int {
-			rockchip,pins = <0 RK_PD3 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
 
@@ -705,7 +680,7 @@
 				};
 			};
 
-			vdd_cpu_lit_s0: vdd_cpu_lit_mem_s0: vdd_npu_s0: dcdc-reg2 {
+			vdd_cpu_lit_s0: vdd_cpu_lit_mem_s0: dcdc-reg2 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <550000>;
@@ -756,7 +731,7 @@
 				};
 			};
 
-			vdd_npu_mem_s0: dcdc-reg6 {
+			dcdc-reg6 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <675000>;
@@ -953,108 +928,14 @@
 
 };
 
-&sata0 {
-	status = "okay";
-};
-
-&u2phy0_otg {
-	// Attribute is not in the schema - obsolete?
-	// rockchip,typec-vbus-det;
-	status = "okay";
-};
-
-&u2phy2 {
-	status = "okay";
-};
-
-&u2phy2_host {
-	phy-supply = <&vcc5v0_host>;
-	status = "okay";
-};
-
-&u2phy3 {
-	status = "okay";
-};
-
-&u2phy3_host {
-	phy-supply = <&vcc5v0_host>;
-	status = "okay";
-};
-
-&usb_host0_ehci {
-	status = "okay";
-};
-
-&usb_host0_ohci {
-	status = "okay";
-};
-
-&usb_host1_ehci {
-	status = "okay";
-};
-
-&usb_host1_ohci {
-	status = "okay";
-};
-
-&usb_host0_xhci {
-	usb-role-switch;
-	dr_mode = "host";
-	status = "okay";
-
-	port {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		usb_host0_xhci_drd_sw: endpoint {
-			remote-endpoint = <&usbc0_hs>;
-		};
-	};
-};
-
-&usb_host1_xhci {
-	status = "okay";
-};
-
-&usb_host2_xhci {
-	status = "okay";
-};
-
-&usbdp_phy0 {
-	orientation-switch;
-	mode-switch;
-	sbu1-dc-gpios = <&gpio4 RK_PA6 GPIO_ACTIVE_HIGH>;
-	sbu2-dc-gpios = <&gpio4 RK_PA7 GPIO_ACTIVE_HIGH>;
-	status = "okay";
-
-	port {
-		#address-cells = <1>;
-		#size-cells = <0>;
-
-		usbdp_phy0_typec_ss: endpoint@0 {
-			reg = <0>;
-			remote-endpoint = <&usbc0_ss>;
-		};
-
-		usbdp_phy0_typec_sbu: endpoint@1 {
-			reg = <1>;
-			remote-endpoint = <&usbc0_sbu>;
-		};
-	};
-};
-
-&usbdp_phy0_u3 {
-	status = "okay";
-};
-
-&cpu_l0 { operating-points-v2 = <&opp_table_cluster0>; };
-&cpu_l1 { operating-points-v2 = <&opp_table_cluster0>; };
-&cpu_l2 { operating-points-v2 = <&opp_table_cluster0>; };
-&cpu_l3 { operating-points-v2 = <&opp_table_cluster0>; };
-&cpu_b0 { operating-points-v2 = <&opp_table_cluster1>; };
-&cpu_b1 { operating-points-v2 = <&opp_table_cluster1>; };
-&cpu_b2 { operating-points-v2 = <&opp_table_cluster2>; };
-&cpu_b3 { operating-points-v2 = <&opp_table_cluster2>; };
+&cpu_l0 { operating-points-v2 = <&cluster0_opp_table>; };
+&cpu_l1 { operating-points-v2 = <&cluster0_opp_table>; };
+&cpu_l2 { operating-points-v2 = <&cluster0_opp_table>; };
+&cpu_l3 { operating-points-v2 = <&cluster0_opp_table>; };
+&cpu_b0 { operating-points-v2 = <&cluster1_opp_table>; };
+&cpu_b1 { operating-points-v2 = <&cluster1_opp_table>; };
+&cpu_b2 { operating-points-v2 = <&cluster2_opp_table>; };
+&cpu_b3 { operating-points-v2 = <&cluster2_opp_table>; };
 
 // serial ports
 // RS232 on the board (FC10 connector)
