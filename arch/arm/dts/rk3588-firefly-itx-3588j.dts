@@ -667,7 +667,7 @@
 		};
 
 		regulators {
-			vdd_gpu_s0: dcdc-reg1 {
+			vdd_gpu_s0: vdd_gpu_mem_s0: dcdc-reg1 {
 				regulator-boot-on;
 				regulator-min-microvolt = <550000>;
 				regulator-max-microvolt = <950000>;
@@ -705,7 +705,7 @@
 				};
 			};
 
-			vdd_vdenc_s0: dcdc-reg4 {
+			vdd_vdenc_s0: vdd_vdenc_mem_s0: dcdc-reg4 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <550000>;
@@ -718,26 +718,23 @@
 
 			};
 
-			vdd_gpu_mem_s0: dcdc-reg5 {
+			vdd_ddr_s0: dcdc-reg5 {
 				regulator-boot-on;
 				regulator-min-microvolt = <675000>;
 				regulator-max-microvolt = <950000>;
 				regulator-ramp-delay = <12500>;
 				regulator-enable-ramp-delay = <400>;
-				regulator-name = "vdd_gpu_mem_s0";
+				regulator-name = "vdd_ddr_s0";
 				status = "okay";
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
 			};
 
-			dcdc-reg6 {
+			vdd2_ddr_s3: dcdc-reg6 {
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-min-microvolt = <675000>;
-				regulator-max-microvolt = <950000>;
-				regulator-ramp-delay = <12500>;
-				regulator-name = "vdd_npu_mem_s0";
+				regulator-name = "vdd2_ddr_s3";
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
@@ -757,40 +754,40 @@
 				};
 			};
 
-			vdd_vdenc_mem_s0: dcdc-reg8 {
+			vcc_3v3_s3: dcdc-reg8 {
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-min-microvolt = <675000>;
-				regulator-max-microvolt = <950000>;
-				regulator-ramp-delay = <12500>;
-				regulator-name = "vdd_vdenc_mem_s0";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-name = "vcc_3v3_s3";
 				regulator-state-mem {
-					regulator-off-in-suspend;
+					regulator-on-in-suspend;
+					regulator-suspend-microvolt = <3300000>;
 				};
 			};
 
-			vdd2_ddr_s3: dcdc-reg9 {
+			vddq_ddr_s0: dcdc-reg9 {
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-name = "vdd2_ddr_s3";
+				regulator-name = "vddq_ddr_s0";
 				regulator-state-mem {
 					regulator-on-in-suspend;
 				};
 			};
 
-			vdd_ddr_s0: dcdc-reg10 {
+			vcc_1v8_s3: dcdc-reg10 {
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-min-microvolt = <675000>;
-				regulator-max-microvolt = <900000>;
-				regulator-ramp-delay = <12500>;
-				regulator-name = "vdd_ddr_s0";
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <1800000>;
+				regulator-name = "vcc_1v8_s3";
 				regulator-state-mem {
-					regulator-off-in-suspend;
+					regulator-on-in-suspend;
+					regulator-suspend-microvolt = <1800000>;
 				};
 			};
 
-			avcc_1v8_s0: pldo-reg1 {
+			avcc_1v8_s0: avcc_1v8_codec_s0: pldo-reg1 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <1800000>;
@@ -802,41 +799,38 @@
 				};
 			};
 
-			vdd1_1v8_ddr_s3: pldo-reg2 {
+			vcc_1v8_s0: pldo-reg2 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <1800000>;
 				regulator-max-microvolt = <1800000>;
-				regulator-ramp-delay = <12500>;
-				regulator-name = "vdd1_1v8_ddr_s3";
+				regulator-name = "vcc_1v8_s0";
 				regulator-state-mem {
-					regulator-on-in-suspend;
+					regulator-off-in-suspend;
 					regulator-suspend-microvolt = <1800000>;
+
 				};
 			};
 
-			avcc_1v8_codec_s0: pldo-reg3 {
+			avdd_1v2_s0: pldo-reg3 {
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-min-microvolt = <1800000>;
-				regulator-max-microvolt = <1800000>;
-				regulator-ramp-delay = <12500>;
-				regulator-name = "avcc_1v8_codec_s0";
+				regulator-min-microvolt = <1200000>;
+				regulator-max-microvolt = <1200000>;
+				regulator-name = "avdd_1v2_s0";
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
 			};
 
-			vcc_3v3_s3: pldo-reg4 {
+			vcc_3v3_s0: pldo-reg4 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <3300000>;
 				regulator-max-microvolt = <3300000>;
-				regulator-ramp-delay = <12500>;
-				regulator-name = "vcc_3v3_s3";
+				regulator-name = "vcc_3v3_s0";
 				regulator-state-mem {
-					regulator-on-in-suspend;
-					regulator-suspend-microvolt = <3300000>;
+					regulator-off-in-suspend;
 				};
 			};
 
@@ -845,23 +839,22 @@
 				regulator-boot-on;
 				regulator-min-microvolt = <1800000>;
 				regulator-max-microvolt = <3300000>;
-				regulator-ramp-delay = <12500>;
 				regulator-name = "vccio_sd_s0";
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
 			};
 
-			vccio_1v8_s3: pldo-reg6 {
+			pldo6_s3: pldo-reg6 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <1800000>;
 				regulator-max-microvolt = <1800000>;
-				regulator-ramp-delay = <12500>;
-				regulator-name = "vccio_1v8_s3";
+				regulator-name = "pldo6_s3";
 				regulator-state-mem {
 					regulator-on-in-suspend;
 					regulator-suspend-microvolt = <1800000>;
+
 				};
 			};
 
@@ -870,7 +863,6 @@
 				regulator-boot-on;
 				regulator-min-microvolt = <750000>;
 				regulator-max-microvolt = <750000>;
-				regulator-ramp-delay = <12500>;
 				regulator-name = "vdd_0v75_s3";
 				regulator-state-mem {
 					regulator-on-in-suspend;
@@ -878,30 +870,19 @@
 				};
 			};
 
-			vdd2l_0v9_ddr_s3: nldo-reg2 {
+			vdd_ddr_pll_s0: nldo-reg2 {
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-min-microvolt = <900000>;
-				regulator-max-microvolt = <900000>;
-				regulator-name = "vdd2l_0v9_ddr_s3";
-				regulator-state-mem {
-					regulator-on-in-suspend;
-					regulator-suspend-microvolt = <900000>;
-				};
-			};
-
-			vdd_0v75_hdmi_edp_s0: nldo-reg3 {
-				regulator-always-on;
-				regulator-boot-on;
-				regulator-min-microvolt = <750000>;
-				regulator-max-microvolt = <750000>;
-				regulator-name = "vdd_0v75_hdmi_edp_s0";
+				regulator-min-microvolt = <850000>;
+				regulator-max-microvolt = <850000>;
+				regulator-name = "vdd_ddr_pll_s0";
 				regulator-state-mem {
 					regulator-off-in-suspend;
+					regulator-suspend-microvolt = <850000>;
 				};
 			};
 
-			avdd_0v75_s0: nldo-reg4 {
+			avdd_0v75_s0: nldo-reg3 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <750000>;
@@ -912,12 +893,25 @@
 				};
 			};
 
-			vdd_0v85_s0: nldo-reg5 {
+			vdd_0v85_s0: nldo-reg4 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <850000>;
 				regulator-max-microvolt = <850000>;
 				regulator-name = "vdd_0v85_s0";
+				regulator-state-mem {
+					regulator-off-in-suspend;
+
+				};
+			};
+
+			vdd_0v75_s0: nldo-reg5 {
+				regulator-always-on;
+				regulator-boot-on;
+				regulator-min-microvolt = <750000>;
+				regulator-max-microvolt = <750000>;
+				regulator-name = "vdd_0v75_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
