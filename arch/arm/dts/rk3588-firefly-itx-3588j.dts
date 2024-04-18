@@ -154,8 +154,22 @@
 		enable-active-high;
 		gpio = <&pca9555 PCA_IO1_3 GPIO_ACTIVE_HIGH>;  //PCA_IO 13
 	};
+
+	vcc_sdcard_pwr_en: vcc-sdcard-pwr-en-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_sdcard_pwr_en";
+		regulator-boot-on;
+		regulator-always-on;
+		enable-active-high;
+		gpio = <&pca9555 PCA_IO1_5 GPIO_ACTIVE_HIGH>;  //PCA_IO 15
+		status = "disabled";
+	};
 };
 
+&vcc_sdcard_pwr_en{
+	gpio = <&pca9555 PCA_IO1_5 GPIO_ACTIVE_HIGH>;  //PCA_IO 15
+	status = "okay";
+};
 &sdmmc {
 	bus-width = <4>;
 	cap-mmc-highspeed;
@@ -175,6 +189,7 @@
 	no-sd;
 	no-sdio;
 	non-removable;
+	mmc-hs200-1_8v;
 	status = "okay";
 };
 
@@ -674,7 +689,6 @@
 				regulator-ramp-delay = <12500>;
 				regulator-name = "vdd_gpu_s0";
 				regulator-enable-ramp-delay = <400>;
-				status = "okay";
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
@@ -687,6 +701,7 @@
 				regulator-max-microvolt = <950000>;
 				regulator-ramp-delay = <12500>;
 				regulator-name = "vdd_npu_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
@@ -725,7 +740,6 @@
 				regulator-ramp-delay = <12500>;
 				regulator-enable-ramp-delay = <400>;
 				regulator-name = "vdd_ddr_s0";
-				status = "okay";
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};

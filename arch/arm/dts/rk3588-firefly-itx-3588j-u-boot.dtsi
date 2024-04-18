@@ -109,11 +109,6 @@
     status = "okay";
 };
 
-&cru {
-    bootph-pre-ram;
-    status = "okay";
-};
-
 // This was used in the BSP 2017 U-Boot. It offers accelerated
 // crypto performed in hardware, but the driver model DM_CRYPTO does
 // not exist anymore. Disabling it until someone(tm) can perform

@@ -69,17 +69,17 @@
                 #address-cells = <1>;
                 #size-cells = <0>;
 
-                dsi0_in_vp2: endpoint@0 {
-                    reg = <0>;
-                    remote-endpoint = <&vp2_out_dsi0>;
-                    status = "disabled";
-                };
+//                dsi0_in_vp2: endpoint@0 {
+//                    reg = <0>;
+//                    remote-endpoint = <&vp2_out_dsi0>;
+//                    status = "disabled";
+//                };
 
-                dsi0_in_vp3: endpoint@1 {
-                    reg = <1>;
-                    remote-endpoint = <&vp3_out_dsi0>;
-                    status = "disabled";
-                };
+//                dsi0_in_vp3: endpoint@1 {
+//                    reg = <1>;
+//                    remote-endpoint = <&vp3_out_dsi0>;
+//                    status = "disabled";
+//                };
             };
         };
     };
@@ -109,17 +109,17 @@
                 #address-cells = <1>;
                 #size-cells = <0>;
 
-                dsi1_in_vp2: endpoint@0 {
-                    reg = <0>;
-                    remote-endpoint = <&vp2_out_dsi1>;
-                    status = "disabled";
-                };
-
-                dsi1_in_vp3: endpoint@1 {
-                    reg = <1>;
-                    remote-endpoint = <&vp3_out_dsi1>;
-                    status = "disabled";
-                };
+//                dsi1_in_vp2: endpoint@0 {
+//                    reg = <0>;
+//                    remote-endpoint = <&vp2_out_dsi1>;
+//                    status = "disabled";
+//                };
+//
+//                dsi1_in_vp3: endpoint@1 {
+//                    reg = <1>;
+//                    remote-endpoint = <&vp3_out_dsi1>;
+//                    status = "disabled";
+//                };
             };
         };
     };
@@ -148,23 +148,23 @@
                 #address-cells = <1>;
                 #size-cells = <0>;
 
-                edp0_in_vp0: endpoint@0 {
-                    reg = <0>;
-                    remote-endpoint = <&vp0_out_edp0>;
-                    status = "disabled";
-                };
-
-                edp0_in_vp1: endpoint@1 {
-                    reg = <1>;
-                    remote-endpoint = <&vp1_out_edp0>;
-                    status = "disabled";
-                };
-
-                edp0_in_vp2: endpoint@2 {
-                    reg = <2>;
-                    remote-endpoint = <&vp2_out_edp0>;
-                    status = "disabled";
-                };
+//                edp0_in_vp0: endpoint@0 {
+//                    reg = <0>;
+//                    remote-endpoint = <&vp0_out_edp0>;
+//                    status = "disabled";
+//                };
+//
+//                edp0_in_vp1: endpoint@1 {
+//                    reg = <1>;
+//                    remote-endpoint = <&vp1_out_edp0>;
+//                    status = "disabled";
+//                };
+//
+//                edp0_in_vp2: endpoint@2 {
+//                    reg = <2>;
+//                    remote-endpoint = <&vp2_out_edp0>;
+//                    status = "disabled";
+//                };
             };
 
             port@1 {
@@ -200,23 +200,23 @@
                 #address-cells = <1>;
                 #size-cells = <0>;
 
-                dp0_in_vp0: endpoint@0 {
-                    reg = <0>;
-                    remote-endpoint = <&vp0_out_dp0>;
-                    status = "disabled";
-                };
-
-                dp0_in_vp1: endpoint@1 {
-                    reg = <1>;
-                    remote-endpoint = <&vp1_out_dp0>;
-                    status = "disabled";
-                };
-
-                dp0_in_vp2: endpoint@2 {
-                    reg = <2>;
-                    remote-endpoint = <&vp2_out_dp0>;
-                    status = "disabled";
-                };
+//                dp0_in_vp0: endpoint@0 {
+//                    reg = <0>;
+//                    remote-endpoint = <&vp0_out_dp0>;
+//                    status = "disabled";
+//                };
+//
+//                dp0_in_vp1: endpoint@1 {
+//                    reg = <1>;
+//                    remote-endpoint = <&vp1_out_dp0>;
+//                    status = "disabled";
+//                };
+//
+//                dp0_in_vp2: endpoint@2 {
+//                    reg = <2>;
+//                    remote-endpoint = <&vp2_out_dp0>;
+//                    status = "disabled";
+//                };
             };
 
             port@1 {
@@ -700,11 +700,11 @@
                 #address-cells = <1>;
                 #size-cells = <0>;
 
-                rgb_in_vp3: endpoint@2 {
-                    reg = <2>;
-                    remote-endpoint = <&vp3_out_rgb>;
-                    status = "disabled";
-                };
+//                rgb_in_vp3: endpoint@2 {
+//                    reg = <2>;
+//                    remote-endpoint = <&vp3_out_rgb>;
+//                    status = "disabled";
+//                };
             };
         };
     };
@@ -712,144 +712,6 @@
 
 &vop {
     status = "okay";
-
-    clocks = <&cru ACLK_VOP>,
-             <&cru HCLK_VOP>,
-             <&cru DCLK_VOP0>,
-             <&cru DCLK_VOP1>,
-             <&cru DCLK_VOP2>,
-             <&cru DCLK_VOP3>,
-             <&cru PCLK_VOP_ROOT>;
-    clock-names = "aclk",
-                  "hclk",
-                  "dclk_vp0",
-                  "dclk_vp1",
-                  "dclk_vp2",
-                  "dclk_vp3",
-                  "pclk_vop";
-    assigned-clocks = <&cru ACLK_VOP>;
-    assigned-clock-rates = <750000000>;
-    resets = <&cru SRST_A_VOP>,
-             <&cru SRST_H_VOP>,
-             <&cru SRST_D_VOP0>,
-             <&cru SRST_D_VOP1>,
-             <&cru SRST_D_VOP2>,
-             <&cru SRST_D_VOP3>;
-    reset-names = "axi",
-                  "ahb",
-                  "dclk_vp0",
-                  "dclk_vp1",
-                  "dclk_vp2",
-                  "dclk_vp3";
-
-    /delete-node/ vop_out;
-
-    vop_out: ports {
-        #address-cells = <1>;
-        #size-cells = <0>;
-
-        vp0: port@0 {
-            #address-cells = <1>;
-            #size-cells = <0>;
-            reg = <0>;
-
-            vp0_out_dp0: endpoint@0 {
-                reg = <0>;
-                remote-endpoint = <&dp0_in_vp0>;
-            };
-
-            vp0_out_edp0: endpoint@1 {
-                reg = <1>;
-                remote-endpoint = <&edp0_in_vp0>;
-            };
-
-            vp0_out_hdmi0: endpoint@2 {
-                reg = <2>;
-                remote-endpoint = <&hdmi0_in_vp0>;
-            };
-
-        };
-
-        vp1: port@1 {
-            #address-cells = <1>;
-            #size-cells = <0>;
-            reg = <1>;
-
-            vp1_out_dp0: endpoint@0 {
-                reg = <0>;
-                remote-endpoint = <&dp0_in_vp1>;
-            };
-
-            vp1_out_edp0: endpoint@1 {
-                reg = <1>;
-                remote-endpoint = <&edp0_in_vp1>;
-            };
-/*
-            vp1_out_hdmi0: endpoint@2 {
-                reg = <2>;
-                remote-endpoint = <&hdmi0_in_vp1>;
-            }; */
-        };
-
-        vp2: port@2 {
-            #address-cells = <1>;
-            #size-cells = <0>;
-            reg = <2>;
-
-            /* Not allowed by
-               http://devicetree.org/schemas/display/rockchip/rockchip-vop2.yaml#
-               Could be obsolete?
-            assigned-clocks = <&cru DCLK_VOP2_SRC>;
-            assigned-clock-parents = <&cru PLL_V0PLL>;
-            */
-
-            vp2_out_dp0: endpoint@0 {
-                reg = <0>;
-                remote-endpoint = <&dp0_in_vp2>;
-            };
-
-            vp2_out_edp0: endpoint@1 {
-                reg = <1>;
-                remote-endpoint = <&edp0_in_vp2>;
-            };
-
-           /* vp2_out_hdmi0: endpoint@2 {
-                reg = <2>;
-                remote-endpoint = <&hdmi0_in_vp2>;
-            }; */
-
-            vp2_out_dsi0: endpoint@3 {
-                reg = <3>;
-                remote-endpoint = <&dsi0_in_vp2>;
-            };
-
-            vp2_out_dsi1: endpoint@4 {
-                reg = <4>;
-                remote-endpoint = <&dsi1_in_vp2>;
-            };
-        };
-
-        vp3: port@3 {
-            #address-cells = <1>;
-            #size-cells = <0>;
-            reg = <3>;
-
-            vp3_out_dsi0: endpoint@0 {
-                reg = <0>;
-                remote-endpoint = <&dsi0_in_vp3>;
-            };
-
-            vp3_out_dsi1: endpoint@1 {
-                reg = <1>;
-                remote-endpoint = <&dsi1_in_vp3>;
-            };
-
-            vp3_out_rgb: endpoint@2 {
-                reg = <2>;
-                remote-endpoint = <&rgb_in_vp3>;
-            };
-        };
-    };
 };
 
 &vp0 {
@@ -859,17 +721,17 @@
     };
 };
 
-&dp0_in_vp2 {
-    status = "okay";
-};
+//&dp0_in_vp2 {
+//    status = "okay";
+//};
 
 &dsi0 {
     status = "okay";
 };
 
-&dsi0_in_vp3 {
-    status = "okay";
-};
+//&dsi0_in_vp3 {
+//    status = "okay";
+//};
 
 &vop_mmu {
     status = "okay";
@@ -895,6 +757,7 @@
     status = "okay";
 };
 
+
 &system_sram2 {
     /* Note from the Firefly BSP: "start address and size should be 4k-aligned" */
     rkvdec0_sram: rkvdec-sram@0 {
@@ -903,4 +766,13 @@
     rkvdec1_sram: rkvdec-sram@78000 {
         reg = <0x78000 0x77000>;
     };
+};
+
+&display_subsystem {
+       clocks = <&hdptxphy_hdmi0>;
+       clock-names = "hdmi0_phy_pll";
+};
+
+&vdpu {
+	status = "okay";
 };

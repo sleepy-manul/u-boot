@@ -5,14 +5,11 @@
 		vcc5v0_host_en: vcc5v0-host-en {
 			rockchip,pins = <1 RK_PB1 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
-	};
 
-	usb-typec {
 		usbc0_int: usbc0-int {
 			rockchip,pins = <0 RK_PD3 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
-
 };
 
 / {
@@ -49,6 +46,14 @@
 &u2phy0_otg {
 	// Attribute is not in the schema - obsolete?
 	// rockchip,typec-vbus-det;
+	status = "okay";
+};
+
+&u2phy1 {
+	status = "okay";
+};
+
+&u2phy1_otg {
 	status = "okay";
 };
 
@@ -94,7 +99,7 @@
 
 &usb_host0_xhci {
 	usb-role-switch;
-	dr_mode = "host";
+	dr_mode = "otg";
 	status = "okay";
 
 	port {
