@@ -15,7 +15,7 @@
     };
 
     chosen {
-        u-boot,spl-boot-order = &sdhci;
+        u-boot,spl-boot-order = &sdmmc, &sdhci;
     };
 
     firmware: firmware {

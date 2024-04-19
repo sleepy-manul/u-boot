@@ -199,11 +199,10 @@
 	cap-mmc-highspeed;
 	cap-sd-highspeed;
 	disable-wp;
+	max-frequency = <150000000>;
 	no-mmc;
 	no-sdio;
 	sd-uhs-sdr104;
-	max-frequency = <150000000>;
-	//vmmc-supply = <&vcc_3v3_s3>;
 	vqmmc-supply = <&vccio_sd_s0>;
 	status = "okay";
 };
