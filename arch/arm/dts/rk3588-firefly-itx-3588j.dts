@@ -79,6 +79,27 @@
 		cooling-levels = <0 95 145 195 255>;
 	};
 
+	leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&leds_gpio>;
+
+		led_power {
+			function = LED_FUNCTION_POWER;
+			default-state = "on";
+			gpios = <&gpio1 RK_PB3 GPIO_ACTIVE_HIGH>;
+			color = <LED_COLOR_ID_GREEN>;
+		};
+
+		led_user {
+			function = LED_FUNCTION_STATUS;
+			default-state = "off";
+			gpios = <&pca9555 PCA_IO0_3 GPIO_ACTIVE_HIGH>;
+			color = <LED_COLOR_ID_YELLOW>;
+		};
+
+	};
+
 	vcc_sata_pwr_en: vcc-sata-pwr-en-regulator {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc_sata_pwr_en";
@@ -164,12 +185,15 @@
 		gpio = <&pca9555 PCA_IO1_5 GPIO_ACTIVE_HIGH>;  //PCA_IO 15
 		status = "disabled";
 	};
+
+
 };
 
 &vcc_sdcard_pwr_en{
 	gpio = <&pca9555 PCA_IO1_5 GPIO_ACTIVE_HIGH>;  //PCA_IO 15
 	status = "okay";
 };
+
 &sdmmc {
 	bus-width = <4>;
 	cap-mmc-highspeed;
