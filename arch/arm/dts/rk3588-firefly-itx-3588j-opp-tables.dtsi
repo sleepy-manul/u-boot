@@ -866,13 +866,6 @@
 	dmc_opp_table: opp-table-dmc {
 		compatible = "operating-points-v2";
 
-		rockchip,leakage-voltage-sel = <
-											   1 31 0
-											   32 44 1
-											   45 57 2
-											   58 254 3
-									   >;
-
 		/* RK3588 dmc OPPs */
 		opp-528000000 {
 			opp-supported-hw = <0xf9 0xffff>;
@@ -970,11 +963,6 @@
 
 	npu_opp_table: opp-table-npu {
 		compatible = "operating-points-v2";
-
-		clocks = <&cru PCLK_NPU_GRF>;
-		clock-names = "pclk";
-
-		rockchip,init-freq = <1000000>;        /* KHz */
 
 		/* RK3588 npu OPPs */
 		opp-300000000 {
@@ -1170,12 +1158,6 @@
 
 	venc_opp_table: opp-table-venc {
 		compatible = "operating-points-v2";
-
-		rockchip,leakage-voltage-sel = <
-											   1 15 0
-											   16 25 1
-											   26 254 2
-									   >;
 
 		opp-800000000 {
 			opp-hz = /bits/ 64 <800000000>;

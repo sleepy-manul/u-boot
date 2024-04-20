@@ -269,12 +269,10 @@
 		compatible = "rockchip,rk8602";
 		reg = <0x42>;
 		vin-supply = <&vcc5v0_sys>;
-		regulator-compatible = "rk860x-reg";
 		regulator-name = "vdd_npu_s0";
 		regulator-min-microvolt = <550000>;
 		regulator-max-microvolt = <950000>;
 		regulator-ramp-delay = <2300>;
-		rockchip,suspend-voltage-selector = <1>;
 		regulator-boot-on;
 		regulator-always-on;
 		regulator-state-mem {
@@ -470,7 +468,6 @@
 
 &pcie2x1l0 {
 	reset-gpios = <&gpio1 RK_PB4 GPIO_ACTIVE_HIGH>;
-	rockchip,skip-scan-in-resume;
 	status = "okay";
 };
 
@@ -484,7 +481,6 @@
 
 	leds {
 		leds_gpio: leds-gpio {
-			// led_power
 			rockchip,pins = <1 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
@@ -503,7 +499,6 @@
 
 	rtl8211f {
 		rtl8211f_rst: rtl8211f-rst {
-			// RK_PB3		11
 			rockchip,pins = <4 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
