@@ -36,6 +36,21 @@
 		mmc1 = &sdmmc;
 	};
 
+	adc_keys: adc-keys {
+		status = "okay";
+		compatible = "adc-keys";
+		io-channels = <&saradc 1>;
+		io-channel-names = "buttons";
+		keyup-threshold-microvolt = <1800000>;
+		poll-interval = <100>;
+
+		button-recovery {
+			label = "F12";
+			linux,code = <KEY_F12>;
+			press-threshold-microvolt = <10000>;
+		};
+	};
+
 	chosen {
 		stdout-path = "serial2:1500000n8";
 		bootargs = "irqchip.gicv3_pseudo_nmi=0 coherent_pool=1m systemd.gpt_auto=0 cgroup_enable=memory swapaccount=1 net.ifnames=0 ignore_loglevel initcall_debug";
@@ -189,10 +204,21 @@
 
 };
 
+&saradc {
+	status = "okay";
+	vref-supply = <&vcc_1v8_s0>;
+};
+
 &vcc_sdcard_pwr_en{
 	gpio = <&pca9555 PCA_IO1_5 GPIO_ACTIVE_HIGH>;  //PCA_IO 15
 	status = "okay";
 };
+
+&vcc_fan_pwr_en {
+	status = "okay";
+	gpio = <&pca9555 PCA_IO1_3 GPIO_ACTIVE_HIGH>;  //PCA_IO 13
+};
+
 
 &sdmmc {
 	bus-width = <4>;
@@ -443,6 +469,12 @@
 	status = "okay";
 };
 
+&vcc5v0_host {
+	gpio = <&pca9555 PCA_IO0_5 GPIO_ACTIVE_HIGH>;
+	vin-supply = <&vcc5v0_usb>;
+	status = "okay";
+};
+
 // SATA
 &combphy0_ps {
 	status = "okay";
@@ -450,6 +482,7 @@
 &sata0 {
 	status = "okay";
 };
+
 &vcc_sata_pwr_en {
 	status = "okay";
 	gpio = <&pca9555 PCA_IO1_2 GPIO_ACTIVE_HIGH>;  //PCA_IO 12
@@ -572,6 +605,7 @@
 	status = "okay";
 };
 
+
 // Successive Approximation Register (SAR) A/D Converter
 &saradc {
 	vref-supply = <&avcc_1v8_s0>;
@@ -624,19 +658,9 @@
 			function = "pin_fun0";
 		};
 
-		rk806_dvs1_slp: dvs1-slp-pins {
-			pins = "gpio_pwrctrl1";
-			function = "pin_fun1";
-		};
-
 		rk806_dvs1_pwrdn: dvs1-pwrdn-pins {
 			pins = "gpio_pwrctrl1";
 			function = "pin_fun2";
-		};
-
-		rk806_dvs1_rst: dvs1-rst-pins {
-			pins = "gpio_pwrctrl1";
-			function = "pin_fun3";
 		};
 
 		rk806_dvs2_null: dvs2-null-pins {
@@ -644,59 +668,9 @@
 			function = "pin_fun0";
 		};
 
-		rk806_dvs2_slp: dvs2-slp-pins {
-			pins = "gpio_pwrctrl2";
-			function = "pin_fun1";
-		};
-
-		rk806_dvs2_pwrdn: dvs2-pwrdn-pins {
-			pins = "gpio_pwrctrl2";
-			function = "pin_fun2";
-		};
-
-		rk806_dvs2_rst: dvs2-rst-pins {
-			pins = "gpio_pwrctrl2";
-			function = "pin_fun3";
-		};
-
-		rk806_dvs2_dvs: dvs2-dvs-pins {
-			pins = "gpio_pwrctrl2";
-			function = "pin_fun4";
-		};
-
-		rk806_dvs2_gpio: dvs2-gpio-pins {
-			pins = "gpio_pwrctrl2";
-			function = "pin_fun5";
-		};
-
 		rk806_dvs3_null: dvs3-null-pins {
 			pins = "gpio_pwrctrl3";
 			function = "pin_fun0";
-		};
-
-		rk806_dvs3_slp: dvs3-slp-pins {
-			pins = "gpio_pwrctrl3";
-			function = "pin_fun1";
-		};
-
-		rk806_dvs3_pwrdn: dvs3-pwrdn-pins {
-			pins = "gpio_pwrctrl3";
-			function = "pin_fun2";
-		};
-
-		rk806_dvs3_rst: dvs3-rst-pins {
-			pins = "gpio_pwrctrl3";
-			function = "pin_fun3";
-		};
-
-		rk806_dvs3_dvs: dvs3-dvs-pins {
-			pins = "gpio_pwrctrl3";
-			function = "pin_fun4";
-		};
-
-		rk806_dvs3_gpio: dvs3-gpio-pins {
-			pins = "gpio_pwrctrl3";
-			function = "pin_fun5";
 		};
 
 		regulators {
@@ -752,14 +726,15 @@
 			};
 
 			vdd_ddr_s0: dcdc-reg5 {
+				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <675000>;
-				regulator-max-microvolt = <950000>;
+				regulator-max-microvolt = <900000>;
 				regulator-ramp-delay = <12500>;
-				regulator-enable-ramp-delay = <400>;
 				regulator-name = "vdd_ddr_s0";
 				regulator-state-mem {
 					regulator-off-in-suspend;
+					regulator-suspend-microvolt = <850000>;
 				};
 			};
 
@@ -997,27 +972,15 @@
 	status = "okay";
 };
 
-&sfc {
-	 status = "okay";
+&vcc_1v8_s0 {
+	regulator-state-mem {
+		regulator-on-in-suspend;
+		regulator-suspend-microvolt = <1800000>;
+	};
+};
 
-	 #address-cells = <1>;
-	 #size-cells = <0>;
-	 spi_nand: flash@0 {
-		 bootph-pre-ram;
-		 compatible = "spi-nand";
-		 reg = <0>;
-		 spi-tx-bus-width = <1>;
-		 spi-rx-bus-width = <4>;
-		 spi-max-frequency = <80000000>;
-	 };
-
-	 spi_nor: flash@1 {
-		 bootph-pre-ram;
-		 compatible = "jedec,spi-nor";
-		 label = "sfc_nor";
-		 reg = <0>;
-		 spi-tx-bus-width = <1>;
-		 spi-rx-bus-width = <4>;
-		 spi-max-frequency = <80000000>;
-	 };
+&avcc_1v8_s0{
+	regulator-state-mem {
+		regulator-on-in-suspend;
+	};
 };
