@@ -201,7 +201,6 @@
 		status = "disabled";
 	};
 
-
 };
 
 &saradc {
@@ -463,6 +462,13 @@
 	status = "okay";
 };
 
+&pcie2x1l0 {
+	reset-gpios = <&gpio1 RK_PB4 GPIO_ACTIVE_HIGH>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&wifi_poweren_gpio>;
+	status = "okay";
+};
+
 &vcc3v3_pcie30 {
 	gpios = <&gpio2 RK_PC5 GPIO_ACTIVE_HIGH>;
 	startup-delay-us = <5000>;
@@ -496,11 +502,6 @@
 
 // pca9555
 &pca9555 {
-	status = "okay";
-};
-
-&pcie2x1l0 {
-	reset-gpios = <&gpio1 RK_PB4 GPIO_ACTIVE_HIGH>;
 	status = "okay";
 };
 
@@ -590,9 +591,6 @@
 		};
 
 		vcc3v3_pcie30_en: vcc3v3-pcie30-en {
-			// RK_PC3 = 19
-			// RK_FUNC_GPIO = 0
-			//<&gpio2 RK_PC5 GPIO_ACTIVE_HIGH>
 			rockchip,pins = <2 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
