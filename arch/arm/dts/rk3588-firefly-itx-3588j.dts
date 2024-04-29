@@ -638,7 +638,6 @@
 	status = "okay";
 };
 
-
 // Successive Approximation Register (SAR) A/D Converter
 &saradc {
 	vref-supply = <&avcc_1v8_s0>;

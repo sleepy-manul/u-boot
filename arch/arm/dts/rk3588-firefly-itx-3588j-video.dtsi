@@ -648,14 +648,14 @@
      *  enable-gpios = <&gpio4 RK_PB2 GPIO_ACTIVE_HIGH>;
      * #sound-dai-cells = <0>;
      */
-    status = "okay";
+    status = "disabled";
 };
 &hdmi1_in {
     hdmi1_in_vp1: endpoint {
         remote-endpoint = <&vp1_out_hdmi1>;
     };
 };
-&hdptxphy_hdmi1 { status = "okay"; };
+&hdptxphy_hdmi1 { status = "disabled"; };
 &vp1 {
     vp1_out_hdmi1: endpoint@ROCKCHIP_VOP2_EP_HDMI1 {
         reg = <ROCKCHIP_VOP2_EP_HDMI1>;
@@ -674,9 +674,10 @@
 };
 
 &display_subsystem {
+    compatible = "rockchip,display-subsystem";
     ports = <&vop_out>;
-    clocks = <&hdptxphy_hdmi0>;
-    clock-names = "hdmi0_phy_pll";
+    /*clocks = <&hdptxphy_hdmi0>;
+    clock-names = "hdmi0_phy_pll"; */
 };
 
 &vdpu {
