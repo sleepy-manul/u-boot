@@ -1,72 +1,90 @@
 
 
-&i2s5_8ch {
-    status = "okay";
-};
-
 / {
-    mclkout_i2s0: mclkout-i2s0@fd58c318 {
-        compatible = "rockchip,clk-out";
-        reg = <0 0xfd58c318 0 0x4>;
-        clocks = <&cru I2S0_8CH_MCLKOUT>;
-        #clock-cells = <0>;
-        clock-output-names = "i2s0_mclkout_to_io";
-        rockchip,bit-shift = <0>;
-        rockchip,bit-set-to-disable;
+    headphone_amp: audio-amplifier-headphone {
+        compatible = "simple-audio-amplifier";
+        enable-gpios = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
+        sound-name-prefix = "Headphones Amp";
     };
 
-/*
-    es8388_sound: es8388-sound {
-        status = "okay";
-        compatible = "everest,es8388";
-        firefly,not-use-dapm;
-        hp-det-gpio = <&gpio1 RK_PC4 GPIO_ACTIVE_LOW>;
-        io-channels = <&saradc 3>;
-        io-channel-names = "adc-detect";
-        spk-con-gpio = <&gpio3 RK_PB2 GPIO_ACTIVE_HIGH>;
-        hp-con-gpio = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
-        linein-type = <0>;
-        rockchip,format = "i2s";
-        rockchip,mclk-fs = <384>;
-        rockchip,cpu = <&i2s0_8ch>;
-        rockchip,codec = <&es8388>;
-        rockchip,audio-routing =
-                "Headphone", "LOUT1",
-                "Headphone", "ROUT1",
-                "Speaker", "LOUT2",
-                "Speaker", "ROUT2",
-                "Headphone", "Headphone Power",
-                "Headphone", "Headphone Power",
-                "Speaker", "Speaker Power",
-                "Speaker", "Speaker Power",
-                "LINPUT1", "Main Mic",
-                "RINPUT1", "Main Mic",
-                "LINPUT2", "Headset Mic",
-                "RINPUT2", "Headset Mic";
+    speaker_amp: audio-amplifier-speaker {
+        compatible = "simple-audio-amplifier";
+        enable-gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_HIGH>;
+        sound-name-prefix = "Speaker Amp";
+    };
+
+    sound {
+        compatible = "simple-audio-card";
         pinctrl-names = "default";
         pinctrl-0 = <&hp_det>;
-    };
-*/
+        simple-audio-card,name = "Analog";
+        simple-audio-card,aux-devs = <&speaker_amp>, <&headphone_amp>;
+        simple-audio-card,format = "i2s";
+        simple-audio-card,mclk-fs = <384>;
+        simple-audio-card,hp-det-gpio = <&gpio1 RK_PC4 GPIO_ACTIVE_LOW>;
+        simple-audio-card,bitclock-master = <&daicpu>;
+        simple-audio-card,frame-master = <&daicpu>;
 
+        simple-audio-card,widgets =
+                "Microphone", "Onboard Microphone",
+                "Microphone", "Microphone Jack",
+                "Speaker", "Speaker",
+                "Headphone", "Headphones";
+
+        simple-audio-card,routing =
+                "Headphones", "LOUT1",
+                "Headphones", "ROUT1",
+                "Speaker", "LOUT2",
+                "Speaker", "ROUT2",
+
+                "Headphones", "Headphones Amp OUTL",
+                "Headphones", "Headphones Amp OUTR",
+                "Headphones Amp INL", "LOUT1",
+                "Headphones Amp INR", "ROUT1",
+
+                "Speaker", "Speaker Amp OUTL",
+                "Speaker", "Speaker Amp OUTR",
+                "Speaker Amp INL", "LOUT2",
+                "Speaker Amp INR", "ROUT2",
+
+                "LINPUT1", "Microphone Jack",
+                "RINPUT1", "Microphone Jack",
+
+                "LINPUT2", "Onboard Microphone",
+                "RINPUT2", "Onboard Microphone";
+
+        daicpu: simple-audio-card,cpu {
+            sound-dai = <&i2s0_8ch>;
+            system-clock-frequency = <12288000>;
+        };
+
+        daicodec: simple-audio-card,codec {
+            sound-dai = <&es8388>;
+            system-clock-frequency = <12288000>;
+        };
+    };
+
+};
+
+&i2s0_8ch {
+    status = "okay";
 };
 
 &i2c3 {
     status = "okay";
     es8388: audio-codec@11 {
-        status = "okay";
-        #sound-dai-cells = <0>;
         compatible = "everest,es8388";
+        status = "okay";
         reg = <0x11>;
-        clocks = <&mclkout_i2s0>;
+        #sound-dai-cells = <0>;
+        clocks = <&cru I2S0_8CH_MCLKOUT>;
         clock-names = "mclk";
-        //assigned-clocks = <&mclkout_i2s0>;
-        //assigned-clock-rates = <12288000>;
+        DVDD-supply = <&avcc_1v8_codec_s0>;
+        AVDD-supply = <&avcc_1v8_codec_s0>;
+        PVDD-supply = <&vcc_3v3_s3>;
+        HPVDD-supply = <&vcc_3v3_s3>;
         pinctrl-names = "default";
         pinctrl-0 = <&i2s0_mclk>;
-        AVDD-supply = <&avcc_1v8_codec_s0>;
-        DVDD-supply = <&avcc_1v8_codec_s0>;
-        HPVDD-supply = <&vcc_3v3_s3>;
-        PVDD-supply = <&vcc_3v3_s3>;
     };
 
 };
