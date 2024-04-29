@@ -16,6 +16,7 @@
 	vbus5v0_typec_pwr_en: vbus5v0-typec-pwr-en-regulator {
 		compatible = "regulator-fixed";
 		regulator-name = "vbus5v0_typec_pwr_en";
+		regulator-boot-on;
 		enable-active-high;
 		status = "okay";
 		gpio = <&pca9555 PCA_IO1_4 GPIO_ACTIVE_HIGH>;  //PCA_IO 14

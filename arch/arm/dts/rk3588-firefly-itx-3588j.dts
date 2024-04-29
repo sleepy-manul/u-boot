@@ -26,7 +26,8 @@
 
 / {
 	model = "Firefly ITX-3588J";
-	bootargs = "irqchip.gicv3_pseudo_nmi=0 coherent_pool=1m cgroup_enable=memory swapaccount=1 net.ifnames=0";
+	// These bootargs from the 5.10 BSP. It is unclear whether they are still required.
+	bootargs = "irqchip.gicv3_pseudo_nmi=0 coherent_pool=1m cgroup_enable=memory swapaccount=1";
 	compatible = "firefly,rk3588-itx-3588j", "rockchip,rk3588";
 
 	aliases {
@@ -85,13 +86,12 @@
 		status = "okay";
 	};
 
-	//ver v1.1 support
 	fan: pwm-fan {
 		compatible = "pwm-fan";
 		#cooling-cells = <2>;
 		fan-supply = <&vcc12v_dcin>;
 		pwms = <&pwm15 0 50000 1>;
-		cooling-levels = <0 95 145 195 255>;
+		cooling-levels = <255 200 150 100 50 0>;
 	};
 
 	leds {
@@ -137,6 +137,7 @@
 	vcc3v3_pcie30: vcc3v3-pcie30-regulator {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc3v3_pcie30";
+		regulator-boot-on;
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 		enable-active-high;
@@ -201,11 +202,40 @@
 		status = "disabled";
 	};
 
+	rfkill {
+		compatible = "rfkill-gpio";
+		label = "rfkill-pcie-wlan";
+		radio-type = "wlan";
+		shutdown-gpios = <&gpio4 RK_PA2 GPIO_ACTIVE_HIGH>;
+	};
 };
 
-&saradc {
-	status = "okay";
-	vref-supply = <&vcc_1v8_s0>;
+&package_thermal {
+	polling-delay = <1000>;
+
+	trips {
+		package_fan0: package-fan0 {
+			hysteresis = <5000>;
+			temperature = <55000>;
+			type = "active";
+		};
+		package_fan1: package-fan1 {
+			hysteresis = <5000>;
+			temperature = <65000>;
+			type = "active";
+		};
+	};
+
+	cooling-maps {
+		map1 {
+			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
+			trip = <&package_fan0>;
+		};
+		map2 {
+			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
+			trip = <&package_fan1>;
+		};
+	};
 };
 
 &vcc_sdcard_pwr_en{
@@ -314,7 +344,7 @@
 &i2c4 {
 	status = "okay";
 	pinctrl-names = "default";
-	pinctrl-0 = <&i2c4m3_xfer>;
+	pinctrl-0 = <&i2c4m1_xfer>;
 };
 
 &i2c7 {	status = "okay"; };
@@ -394,7 +424,6 @@
 	phy-handle = <&rgmii_phy1>;
 	clock_in_out = "output";
 
-	// RK_PB7		15
 	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
 	snps,reset-active-low;
 	// Reset time is 20ms, 100ms for rtl8211f
@@ -465,7 +494,7 @@
 &pcie2x1l0 {
 	reset-gpios = <&gpio1 RK_PB4 GPIO_ACTIVE_HIGH>;
 	pinctrl-names = "default";
-	pinctrl-0 = <&wifi_poweren_gpio>;
+	pinctrl-0 = <&wifi_poweren_gpio>, <&bt_reset_gpio>, <&uart6_gpios>, <&bt_irq_gpio>, <&bt_wake_gpio>;
 	status = "okay";
 };
 
@@ -576,9 +605,15 @@
 	};
 
 	wireless-wlan {
-		wifi_host_wake_irq: wifi-host-wake-irq {
-			rockchip,pins = <0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_down>;
-		};
+		/*
+		 * wifi_host_wake_irq / wifi-host-wake-irq are disabled in BSP's
+		 * arch/arm64/boot/dts/rockchip/rk3588-firefly-itx-3588j.dtsi.
+		 * I assume that the Wake-on-(W)LAN function is not supported.
+		 *
+		 * wifi_host_wake_irq: wifi-host-wake-irq {
+		 *	rockchip,pins = <0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_down>;
+		 * };
+		 */
 
 		wifi_poweren_gpio: wifi-poweren-gpio {
 			rockchip,pins = <0 RK_PC4 RK_FUNC_GPIO &pcfg_pull_up>;
@@ -923,18 +958,7 @@
 			};
 		};
 	};
-
-
 };
-
-&cpu_l0 { operating-points-v2 = <&cluster0_opp_table>; };
-&cpu_l1 { operating-points-v2 = <&cluster0_opp_table>; };
-&cpu_l2 { operating-points-v2 = <&cluster0_opp_table>; };
-&cpu_l3 { operating-points-v2 = <&cluster0_opp_table>; };
-&cpu_b0 { operating-points-v2 = <&cluster1_opp_table>; };
-&cpu_b1 { operating-points-v2 = <&cluster1_opp_table>; };
-&cpu_b2 { operating-points-v2 = <&cluster2_opp_table>; };
-&cpu_b3 { operating-points-v2 = <&cluster2_opp_table>; };
 
 // serial ports
 // RS232 on the board (FC10 connector)
@@ -962,8 +986,9 @@
 	status = "okay";
 };
 
-// Note to self: dfi@fe060000 (&dfi) is disabled in the BSP, so it is likely
-// that such a device is not present at all.
+&dfi {
+	status = "okay";
+};
 
 // thermal sensor analog / digital converter (CPU temperatures etc.)
 &tsadc {
