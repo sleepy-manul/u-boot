@@ -348,20 +348,20 @@
 		};
 	};
 
-	litcore_grf: syscon@fd594000 {
-		compatible = "rockchip,rk3588-litcore-grf", "syscon";
-		reg = <0x0 0xfd594000 0x0 0x100>;
-	};
+//	litcore_grf: syscon@fd594000 {
+//		compatible = "rockchip,rk3588-litcore-grf", "syscon";
+//		reg = <0x0 0xfd594000 0x0 0x100>;
+//	};
 
-	dsu_grf: syscon@fd598000 {
-		compatible = "rockchip,rk3588-dsu-grf", "syscon";
-		reg = <0x0 0xfd598000 0x0 0x100>;
-	};
+//	dsu_grf: syscon@fd598000 {
+//		compatible = "rockchip,rk3588-dsu-grf", "syscon";
+//		reg = <0x0 0xfd598000 0x0 0x100>;
+//	};
 
-	npu_grf: syscon@fd5a2000 {
-		compatible = "rockchip,rk3588-npu-grf", "syscon";
-		reg = <0x0 0xfd5a2000 0x0 0x100>;
-	};
+//	npu_grf: syscon@fd5a2000 {
+//		compatible = "rockchip,rk3588-npu-grf", "syscon";
+//		reg = <0x0 0xfd5a2000 0x0 0x100>;
+//	};
 
 	bigcore0_grf: syscon@fd590000 {
 		compatible = "rockchip,rk3588-bigcore0-grf", "syscon";

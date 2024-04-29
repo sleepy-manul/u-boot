@@ -1,239 +1,239 @@
 #include <dt-bindings/soc/rockchip,vop2.h>
 
 / {
-    mipidcphy0_grf: syscon@fd5e8000 {
-        compatible = "rockchip,mipi-dcphy-grf", "syscon";
-        reg = <0x0 0xfd5e8000 0x0 0x4000>;
-    };
-
-    mipidcphy1_grf: syscon@fd5ec000 {
-        compatible = "rockchip,mipi-dcphy-grf", "syscon";
-        reg = <0x0 0xfd5ec000 0x0 0x4000>;
-    };
-
-    mipidcphy0: phy@feda0000 {
-        compatible = "rockchip,rk3588-mipi-dcphy";
-        reg = <0x0 0xfeda0000 0x0 0x10000>;
-        rockchip,grf = <&mipidcphy0_grf>;
-        clocks = <&cru PCLK_MIPI_DCPHY0>,
-                 <&cru CLK_USBDPPHY_MIPIDCPPHY_REF>;
-        clock-names = "pclk", "ref";
-        resets = <&cru SRST_M_MIPI_DCPHY0>,
-                 <&cru SRST_P_MIPI_DCPHY0>,
-                 <&cru SRST_P_MIPI_DCPHY0_GRF>,
-                 <&cru SRST_S_MIPI_DCPHY0>;
-        reset-names = "m_phy", "apb", "grf", "s_phy";
-        #phy-cells = <0>;
-        status = "okay";
-    };
-
-    mipidcphy1: phy@fedb0000 {
-        compatible = "rockchip,rk3588-mipi-dcphy";
-        reg = <0x0 0xfedb0000 0x0 0x10000>;
-        rockchip,grf = <&mipidcphy1_grf>;
-        clocks = <&cru PCLK_MIPI_DCPHY1>,
-                 <&cru CLK_USBDPPHY_MIPIDCPPHY_REF>;
-        clock-names = "pclk", "ref";
-        resets = <&cru SRST_M_MIPI_DCPHY1>,
-                 <&cru SRST_P_MIPI_DCPHY1>,
-                 <&cru SRST_P_MIPI_DCPHY1_GRF>,
-                 <&cru SRST_S_MIPI_DCPHY1>;
-        reset-names = "m_phy", "apb", "grf", "s_phy";
-        #phy-cells = <0>;
-        status = "okay";
-    };
-
-    dsi0: dsi@fde20000 {
-        compatible = "rockchip,rk3588-mipi-dsi2";
-        firefly-check;
-        reg = <0x0 0xfde20000 0x0 0x10000>;
-        interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH 0>;
-        clocks = <&cru PCLK_DSIHOST0>, <&cru CLK_DSIHOST0>;
-        clock-names = "pclk", "sys_clk";
-        resets = <&cru SRST_P_DSIHOST0>;
-        reset-names = "apb";
-        power-domains = <&power RK3588_PD_VOP>;
-        phys = <&mipidcphy0>;
-        phy-names = "dcphy";
-        rockchip,grf = <&vop_grf>;
-        #address-cells = <1>;
-        #size-cells = <0>;
-        status = "okay";
-
-        ports {
-            #address-cells = <1>;
-            #size-cells = <0>;
-
-            dsi0_in: port@0 {
-                reg = <0>;
-            };
-
-            dsi0_out: port@1 {
-                reg = <1>;
-            };
-        };
-    };
-
-    dsi1: dsi@fde30000 {
-        compatible = "rockchip,rk3588-mipi-dsi2";
-        reg = <0x0 0xfde30000 0x0 0x10000>;
-        interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH 0>;
-        clocks = <&cru PCLK_DSIHOST1>, <&cru CLK_DSIHOST1>;
-        clock-names = "pclk", "sys_clk";
-        resets = <&cru SRST_P_DSIHOST1>;
-        reset-names = "apb";
-        power-domains = <&power RK3588_PD_VOP>;
-        phys = <&mipidcphy1>;
-        phy-names = "dcphy";
-        rockchip,grf = <&vop_grf>;
-        #address-cells = <1>;
-        #size-cells = <0>;
-        status = "disabled";
-
-        ports {
-            #address-cells = <1>;
-            #size-cells = <0>;
-
-            dsi1_in: port@0 {
-                reg = <0>;
-                #address-cells = <1>;
-                #size-cells = <0>;
-
-//                dsi1_in_vp2: endpoint@0 {
-//                    reg = <0>;
-//                    remote-endpoint = <&vp2_out_dsi1>;
-//                    status = "disabled";
-//                };
+//    mipidcphy0_grf: syscon@fd5e8000 {
+//        compatible = "rockchip,mipi-dcphy-grf", "syscon";
+//        reg = <0x0 0xfd5e8000 0x0 0x4000>;
+//    };
 //
-//                dsi1_in_vp3: endpoint@1 {
-//                    reg = <1>;
-//                    remote-endpoint = <&vp3_out_dsi1>;
-//                    status = "disabled";
-//                };
-            };
-        };
-    };
+//    mipidcphy1_grf: syscon@fd5ec000 {
+//        compatible = "rockchip,mipi-dcphy-grf", "syscon";
+//        reg = <0x0 0xfd5ec000 0x0 0x4000>;
+//    };
 
-    edp0: edp@fdec0000 {
-        compatible = "rockchip,rk3588-edp";
-        reg = <0x0 0xfdec0000 0x0 0x1000>;
-        interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH 0>;
-        clocks = <&cru CLK_EDP0_24M>, <&cru PCLK_EDP0>,
-                 <&cru CLK_EDP0_200M>, <&hclk_vo1>;
-        clock-names = "dp", "pclk", "spdif", "hclk";
-        resets = <&cru SRST_EDP0_24M>, <&cru SRST_P_EDP0>;
-        reset-names = "dp", "apb";
-        phys = <&hdptxphy_hdmi0>;
-        phy-names = "dp";
-        power-domains = <&power RK3588_PD_VO1>;
-        rockchip,grf = <&vo1_grf>;
-        status = "okay";
-
-        ports {
-            #address-cells = <1>;
-            #size-cells = <0>;
-
-            port@0 {
-                reg = <0>;
-                #address-cells = <1>;
-                #size-cells = <0>;
-
-//                edp0_in_vp0: endpoint@0 {
-//                    reg = <0>;
-//                    remote-endpoint = <&vp0_out_edp0>;
-//                    status = "disabled";
-//                };
+//    mipidcphy0: phy@feda0000 {
+//        compatible = "rockchip,rk3588-mipi-dcphy";
+//        reg = <0x0 0xfeda0000 0x0 0x10000>;
+//        rockchip,grf = <&mipidcphy0_grf>;
+//        clocks = <&cru PCLK_MIPI_DCPHY0>,
+//                 <&cru CLK_USBDPPHY_MIPIDCPPHY_REF>;
+//        clock-names = "pclk", "ref";
+//        resets = <&cru SRST_M_MIPI_DCPHY0>,
+//                 <&cru SRST_P_MIPI_DCPHY0>,
+//                 <&cru SRST_P_MIPI_DCPHY0_GRF>,
+//                 <&cru SRST_S_MIPI_DCPHY0>;
+//        reset-names = "m_phy", "apb", "grf", "s_phy";
+//        #phy-cells = <0>;
+//        status = "okay";
+//    };
 //
-//                edp0_in_vp1: endpoint@1 {
-//                    reg = <1>;
-//                    remote-endpoint = <&vp1_out_edp0>;
-//                    status = "disabled";
-//                };
+//    mipidcphy1: phy@fedb0000 {
+//        compatible = "rockchip,rk3588-mipi-dcphy";
+//        reg = <0x0 0xfedb0000 0x0 0x10000>;
+//        rockchip,grf = <&mipidcphy1_grf>;
+//        clocks = <&cru PCLK_MIPI_DCPHY1>,
+//                 <&cru CLK_USBDPPHY_MIPIDCPPHY_REF>;
+//        clock-names = "pclk", "ref";
+//        resets = <&cru SRST_M_MIPI_DCPHY1>,
+//                 <&cru SRST_P_MIPI_DCPHY1>,
+//                 <&cru SRST_P_MIPI_DCPHY1_GRF>,
+//                 <&cru SRST_S_MIPI_DCPHY1>;
+//        reset-names = "m_phy", "apb", "grf", "s_phy";
+//        #phy-cells = <0>;
+//        status = "okay";
+//    };
 //
-//                edp0_in_vp2: endpoint@2 {
-//                    reg = <2>;
-//                    remote-endpoint = <&vp2_out_edp0>;
-//                    status = "disabled";
-//                };
-            };
-
-            port@1 {
-                reg = <1>;
-
-                edp0_out: endpoint { };
-            };
-        };
-    };
-
-    dp0: dp@fde50000 {
-        compatible = "rockchip,rk3588-dp";
-        reg = <0x0 0xfde50000 0x0 0x4000>;
-        interrupts = <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH 0>;
-        clocks = <&cru PCLK_DP0>, <&cru CLK_AUX16M_0>,
-                 <&cru MCLK_I2S4_8CH_TX>, <&cru MCLK_SPDIF2_DP0>,
-                 <&hclk_vo0>, <&cru CLK_DP0>;
-        clock-names = "apb", "aux", "i2s", "spdif", "hclk", "hdcp";
-        assigned-clocks = <&cru CLK_AUX16M_0>;
-        assigned-clock-rates = <16000000>;
-        resets = <&cru SRST_DP0>;
-        phys = <&usbdp_phy0 PHY_TYPE_DP>;
-        power-domains = <&power RK3588_PD_VO0>;
-        #sound-dai-cells = <1>;
-        status = "okay";
-
-        ports {
-            #address-cells = <1>;
-            #size-cells = <0>;
-
-            port@0 {
-                reg = <0>;
-                #address-cells = <1>;
-                #size-cells = <0>;
-
-//                dp0_in_vp0: endpoint@0 {
-//                    reg = <0>;
-//                    remote-endpoint = <&vp0_out_dp0>;
-//                    status = "disabled";
-//                };
+//    dsi0: dsi@fde20000 {
+//        compatible = "rockchip,rk3588-mipi-dsi2";
+//        firefly-check;
+//        reg = <0x0 0xfde20000 0x0 0x10000>;
+//        interrupts = <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH 0>;
+//        clocks = <&cru PCLK_DSIHOST0>, <&cru CLK_DSIHOST0>;
+//        clock-names = "pclk", "sys_clk";
+//        resets = <&cru SRST_P_DSIHOST0>;
+//        reset-names = "apb";
+//        power-domains = <&power RK3588_PD_VOP>;
+//        phys = <&mipidcphy0>;
+//        phy-names = "dcphy";
+//        rockchip,grf = <&vop_grf>;
+//        #address-cells = <1>;
+//        #size-cells = <0>;
+//        status = "okay";
 //
-//                dp0_in_vp1: endpoint@1 {
-//                    reg = <1>;
-//                    remote-endpoint = <&vp1_out_dp0>;
-//                    status = "disabled";
-//                };
+//        ports {
+//            #address-cells = <1>;
+//            #size-cells = <0>;
 //
-//                dp0_in_vp2: endpoint@2 {
-//                    reg = <2>;
-//                    remote-endpoint = <&vp2_out_dp0>;
-//                    status = "disabled";
-//                };
-            };
-
-            port@1 {
-                reg = <1>;
-
-                dp0_out: endpoint { };
-            };
-        };
-    };
-
-    hclk_vo0: hclk_vo0@fd7c08dc {
-        compatible = "rockchip,rk3588-clock-gate-link";
-        reg = <0 0xfd7c08dc 0 0x10>;
-        clock-names = "link";
-        clocks = <&cru HCLK_VOP_ROOT>;
-        #power-domain-cells = <1>;
-        #clock-cells = <0>;
-    };
-
-    hclk_vo1: hclk_vo1@fd7c08ec {
-        compatible = "rockchip,rk3588-clock-gate-link";
-        reg = <0 0xfd7c08ec 0 0x10>;
-        clock-names = "link";
-        clocks = <&cru HCLK_VO1USB_TOP_ROOT>;
-        #power-domain-cells = <1>;
-        #clock-cells = <0>;
-    };
+//            dsi0_in: port@0 {
+//                reg = <0>;
+//            };
+//
+//            dsi0_out: port@1 {
+//                reg = <1>;
+//            };
+//        };
+//    };
+//
+//    dsi1: dsi@fde30000 {
+//        compatible = "rockchip,rk3588-mipi-dsi2";
+//        reg = <0x0 0xfde30000 0x0 0x10000>;
+//        interrupts = <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH 0>;
+//        clocks = <&cru PCLK_DSIHOST1>, <&cru CLK_DSIHOST1>;
+//        clock-names = "pclk", "sys_clk";
+//        resets = <&cru SRST_P_DSIHOST1>;
+//        reset-names = "apb";
+//        power-domains = <&power RK3588_PD_VOP>;
+//        phys = <&mipidcphy1>;
+//        phy-names = "dcphy";
+//        rockchip,grf = <&vop_grf>;
+//        #address-cells = <1>;
+//        #size-cells = <0>;
+//        status = "disabled";
+//
+//        ports {
+//            #address-cells = <1>;
+//            #size-cells = <0>;
+//
+//            dsi1_in: port@0 {
+//                reg = <0>;
+//                #address-cells = <1>;
+//                #size-cells = <0>;
+//
+////                dsi1_in_vp2: endpoint@0 {
+////                    reg = <0>;
+////                    remote-endpoint = <&vp2_out_dsi1>;
+////                    status = "disabled";
+////                };
+////
+////                dsi1_in_vp3: endpoint@1 {
+////                    reg = <1>;
+////                    remote-endpoint = <&vp3_out_dsi1>;
+////                    status = "disabled";
+////                };
+//            };
+//        };
+//    };
+//
+//    edp0: edp@fdec0000 {
+//        compatible = "rockchip,rk3588-edp";
+//        reg = <0x0 0xfdec0000 0x0 0x1000>;
+//        interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH 0>;
+//        clocks = <&cru CLK_EDP0_24M>, <&cru PCLK_EDP0>,
+//                 <&cru CLK_EDP0_200M>, <&hclk_vo1>;
+//        clock-names = "dp", "pclk", "spdif", "hclk";
+//        resets = <&cru SRST_EDP0_24M>, <&cru SRST_P_EDP0>;
+//        reset-names = "dp", "apb";
+//        phys = <&hdptxphy_hdmi0>;
+//        phy-names = "dp";
+//        power-domains = <&power RK3588_PD_VO1>;
+//        rockchip,grf = <&vo1_grf>;
+//        status = "okay";
+//
+//        ports {
+//            #address-cells = <1>;
+//            #size-cells = <0>;
+//
+//            port@0 {
+//                reg = <0>;
+//                #address-cells = <1>;
+//                #size-cells = <0>;
+//
+////                edp0_in_vp0: endpoint@0 {
+////                    reg = <0>;
+////                    remote-endpoint = <&vp0_out_edp0>;
+////                    status = "disabled";
+////                };
+////
+////                edp0_in_vp1: endpoint@1 {
+////                    reg = <1>;
+////                    remote-endpoint = <&vp1_out_edp0>;
+////                    status = "disabled";
+////                };
+////
+////                edp0_in_vp2: endpoint@2 {
+////                    reg = <2>;
+////                    remote-endpoint = <&vp2_out_edp0>;
+////                    status = "disabled";
+////                };
+//            };
+//
+//            port@1 {
+//                reg = <1>;
+//
+//                edp0_out: endpoint { };
+//            };
+//        };
+//    };
+//
+//    dp0: dp@fde50000 {
+//        compatible = "rockchip,rk3588-dp";
+//        reg = <0x0 0xfde50000 0x0 0x4000>;
+//        interrupts = <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH 0>;
+//        clocks = <&cru PCLK_DP0>, <&cru CLK_AUX16M_0>,
+//                 <&cru MCLK_I2S4_8CH_TX>, <&cru MCLK_SPDIF2_DP0>,
+//                 <&hclk_vo0>, <&cru CLK_DP0>;
+//        clock-names = "apb", "aux", "i2s", "spdif", "hclk", "hdcp";
+//        assigned-clocks = <&cru CLK_AUX16M_0>;
+//        assigned-clock-rates = <16000000>;
+//        resets = <&cru SRST_DP0>;
+//        phys = <&usbdp_phy0 PHY_TYPE_DP>;
+//        power-domains = <&power RK3588_PD_VO0>;
+//        #sound-dai-cells = <1>;
+//        status = "okay";
+//
+//        ports {
+//            #address-cells = <1>;
+//            #size-cells = <0>;
+//
+//            port@0 {
+//                reg = <0>;
+//                #address-cells = <1>;
+//                #size-cells = <0>;
+//
+////                dp0_in_vp0: endpoint@0 {
+////                    reg = <0>;
+////                    remote-endpoint = <&vp0_out_dp0>;
+////                    status = "disabled";
+////                };
+////
+////                dp0_in_vp1: endpoint@1 {
+////                    reg = <1>;
+////                    remote-endpoint = <&vp1_out_dp0>;
+////                    status = "disabled";
+////                };
+////
+////                dp0_in_vp2: endpoint@2 {
+////                    reg = <2>;
+////                    remote-endpoint = <&vp2_out_dp0>;
+////                    status = "disabled";
+////                };
+//            };
+//
+//            port@1 {
+//                reg = <1>;
+//
+//                dp0_out: endpoint { };
+//            };
+//        };
+//    };
+//
+//    hclk_vo0: hclk_vo0@fd7c08dc {
+//        compatible = "rockchip,rk3588-clock-gate-link";
+//        reg = <0 0xfd7c08dc 0 0x10>;
+//        clock-names = "link";
+//        clocks = <&cru HCLK_VOP_ROOT>;
+//        #power-domain-cells = <1>;
+//        #clock-cells = <0>;
+//    };
+//
+//    hclk_vo1: hclk_vo1@fd7c08ec {
+//        compatible = "rockchip,rk3588-clock-gate-link";
+//        reg = <0 0xfd7c08ec 0 0x10>;
+//        clock-names = "link";
+//        clocks = <&cru HCLK_VO1USB_TOP_ROOT>;
+//        #power-domain-cells = <1>;
+//        #clock-cells = <0>;
+//    };
 
     hdptxphy1_grf: syscon@fd5e4000 {
         compatible = "rockchip,rk3588-hdptxphy-grf", "syscon";
@@ -247,65 +247,64 @@
         status = "okay";
     };
 
-    rga3_core0: rga@fdb60000 {
-        compatible = "rockchip,rga3_core0";
-        reg = <0x0 0xfdb60000 0x0 0x1000>;
-        interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH 0>;
-        interrupt-names = "rga3_core0_irq";
-        clocks = <&cru ACLK_RGA3_0>, <&cru HCLK_RGA3_0>, <&cru CLK_RGA3_0_CORE>;
-        clock-names = "aclk_rga3_0", "hclk_rga3_0", "clk_rga3_0";
-        power-domains = <&power RK3588_PD_RGA30>;
-        iommus = <&rga3_0_mmu>;
-        status = "okay";
-    };
+//    rga3_core0: rga@fdb60000 {
+//        compatible = "rockchip,rga3_core0";
+//        reg = <0x0 0xfdb60000 0x0 0x1000>;
+//        interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH 0>;
+//        interrupt-names = "rga3_core0_irq";
+//        clocks = <&cru ACLK_RGA3_0>, <&cru HCLK_RGA3_0>, <&cru CLK_RGA3_0_CORE>;
+//        clock-names = "aclk_rga3_0", "hclk_rga3_0", "clk_rga3_0";
+//        power-domains = <&power RK3588_PD_RGA30>;
+//        iommus = <&rga3_0_mmu>;
+//        status = "okay";
+//    };
+//    rga3_0_mmu: iommu@fdb60f00 {
+//        compatible = "rockchip,iommu";
+//        reg = <0x0 0xfdb60f00 0x0 0x100>;
+//        interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH 0>;
+//        interrupt-names = "rga3_0_mmu";
+//        clocks = <&cru ACLK_RGA3_0>, <&cru HCLK_RGA3_0>;
+//        clock-names = "aclk", "iface";
+//        power-domains = <&power RK3588_PD_RGA30>;
+//        #iommu-cells = <0>;
+//        status = "disabled";
+//    };
 
-    rga3_0_mmu: iommu@fdb60f00 {
-        compatible = "rockchip,iommu";
-        reg = <0x0 0xfdb60f00 0x0 0x100>;
-        interrupts = <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH 0>;
-        interrupt-names = "rga3_0_mmu";
-        clocks = <&cru ACLK_RGA3_0>, <&cru HCLK_RGA3_0>;
-        clock-names = "aclk", "iface";
-        power-domains = <&power RK3588_PD_RGA30>;
-        #iommu-cells = <0>;
-        status = "disabled";
-    };
+//    rga3_core1: rga@fdb70000 {
+//        compatible = "rockchip,rga3_core1";
+//        reg = <0x0 0xfdb70000 0x0 0x1000>;
+//        interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH 0>;
+//        interrupt-names = "rga3_core1_irq";
+//        clocks = <&cru ACLK_RGA3_1>, <&cru HCLK_RGA3_1>, <&cru CLK_RGA3_1_CORE>;
+//        clock-names = "aclk_rga3_1", "hclk_rga3_1", "clk_rga3_1";
+//        power-domains = <&power RK3588_PD_RGA31>;
+//        iommus = <&rga3_1_mmu>;
+//        status = "okay";
+//    };
+//    rga3_1_mmu: iommu@fdb70f00 {
+//        compatible = "rockchip,iommu";
+//        reg = <0x0 0xfdb70f00 0x0 0x100>;
+//        interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH 0>;
+//        interrupt-names = "rga3_1_mmu";
+//        clocks = <&cru ACLK_RGA3_1>, <&cru HCLK_RGA3_1>;
+//        clock-names = "aclk", "iface";
+//        power-domains = <&power RK3588_PD_RGA31>;
+//        #iommu-cells = <0>;
+//        status = "disabled";
+//    };
 
-    rga3_core1: rga@fdb70000 {
-        compatible = "rockchip,rga3_core1";
-        reg = <0x0 0xfdb70000 0x0 0x1000>;
-        interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH 0>;
-        interrupt-names = "rga3_core1_irq";
-        clocks = <&cru ACLK_RGA3_1>, <&cru HCLK_RGA3_1>, <&cru CLK_RGA3_1_CORE>;
-        clock-names = "aclk_rga3_1", "hclk_rga3_1", "clk_rga3_1";
-        power-domains = <&power RK3588_PD_RGA31>;
-        iommus = <&rga3_1_mmu>;
-        status = "okay";
-    };
+//    rga2: rga@fdb80000 {
+//        compatible = "rockchip,rga2_core0";
+//        reg = <0x0 0xfdb80000 0x0 0x1000>;
+//        interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH 0>;
+//        interrupt-names = "rga2_irq";
+//        clocks = <&cru ACLK_RGA2>, <&cru HCLK_RGA2>, <&cru CLK_RGA2_CORE>;
+//        clock-names = "aclk_rga2", "hclk_rga2", "clk_rga2";
+//        power-domains = <&power RK3588_PD_VDPU>;
+//        status = "okay";
+//    };
 
-    rga3_1_mmu: iommu@fdb70f00 {
-        compatible = "rockchip,iommu";
-        reg = <0x0 0xfdb70f00 0x0 0x100>;
-        interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH 0>;
-        interrupt-names = "rga3_1_mmu";
-        clocks = <&cru ACLK_RGA3_1>, <&cru HCLK_RGA3_1>;
-        clock-names = "aclk", "iface";
-        power-domains = <&power RK3588_PD_RGA31>;
-        #iommu-cells = <0>;
-        status = "disabled";
-    };
-
-    rga2: rga@fdb80000 {
-        compatible = "rockchip,rga2_core0";
-        reg = <0x0 0xfdb80000 0x0 0x1000>;
-        interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH 0>;
-        interrupt-names = "rga2_irq";
-        clocks = <&cru ACLK_RGA2>, <&cru HCLK_RGA2>, <&cru CLK_RGA2_CORE>;
-        clock-names = "aclk_rga2", "hclk_rga2", "clk_rga2";
-        power-domains = <&power RK3588_PD_VDPU>;
-        status = "okay";
-    };
-
+/*
     rkvdec_ccu: rkvdec-ccu@fdc30000 {
         compatible = "rockchip,rkv-decoder-v2-ccu";
         reg = <0x0 0xfdc30000 0x0 0x100>;
@@ -317,185 +316,159 @@
         resets = <&cru SRST_A_RKVDEC_CCU>;
         reset-names = "video_ccu";
         rockchip,skip-pmu-idle-request;
-        /* 1: soft ccu 2: hw ccu */
+        */
+/* 1: soft ccu 2: hw ccu *//*
+
         rockchip,ccu-mode = <1>;
         power-domains = <&power RK3588_PD_RKVDEC0>;
         status = "okay";
     };
+*/
 
-    rkvdec0: rkvdec-core@fdc38000 {
-            compatible = "rockchip,rkv-decoder-v2";
-            reg = <0x0 0xfdc38100 0x0 0x400>, <0x0 0xfdc38000 0x0 0x100>;
-            reg-names = "regs", "link";
-            interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
-            interrupt-names = "irq_rkvdec0";
-            clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
-                     <&cru CLK_RKVDEC0_CA>, <&cru CLK_RKVDEC0_HEVC_CA>;
-            clock-names = "aclk_vcodec", "hclk_vcodec", "clk_core",
-                          "clk_cabac", "clk_hevc_cabac";
-            rockchip,normal-rates = <800000000>, <0>, <600000000>,
-                                    <600000000>, <1000000000>;
-            assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
-                              <&cru CLK_RKVDEC0_CA>, <&cru CLK_RKVDEC0_HEVC_CA>;
-            assigned-clock-rates = <800000000>, <600000000>,
-                                   <600000000>, <1000000000>;
-            resets = <&cru SRST_A_RKVDEC0>, <&cru SRST_H_RKVDEC0>, <&cru SRST_RKVDEC0_CORE>,
-                     <&cru SRST_RKVDEC0_CA>, <&cru SRST_RKVDEC0_HEVC_CA>;
-            reset-names = "video_a", "video_h", "video_core",
-                          "video_cabac", "video_hevc_cabac";
-            rockchip,skip-pmu-idle-request;
-            iommus = <&rkvdec0_mmu>;
-            rockchip,srv = <&mpp_srv>;
-            rockchip,ccu = <&rkvdec_ccu>;
-            rockchip,core-mask = <0x00010001>;
-            rockchip,task-capacity = <16>;
-            rockchip,taskqueue-node = <9>;
-            rockchip,sram = <&rkvdec0_sram>;
-            /* rcb_iova: start and size 1M@4095M */
-            rockchip,rcb-iova = <0xFFF00000 0x100000>;
-            rockchip,rcb-info = <136 24576>, <137 49152>, <141 90112>, <140 49152>,
-                                <139 180224>, <133 49152>, <134 8192>, <135 4352>,
-                                <138 13056>, <142 291584>;
-            rockchip,rcb-min-width = <512>;
-            power-domains = <&power RK3588_PD_RKVDEC0>;
-            status = "okay";
-    };
+//    rkvdec0: rkvdec-core@fdc38000 {
+//            compatible = "rockchip,rkv-decoder-v2";
+//            reg = <0x0 0xfdc38100 0x0 0x400>, <0x0 0xfdc38000 0x0 0x100>;
+//            reg-names = "regs", "link";
+//            interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
+//            interrupt-names = "irq_rkvdec0";
+//            clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
+//                     <&cru CLK_RKVDEC0_CA>, <&cru CLK_RKVDEC0_HEVC_CA>;
+//            clock-names = "aclk_vcodec", "hclk_vcodec", "clk_core",
+//                          "clk_cabac", "clk_hevc_cabac";
+//            rockchip,normal-rates = <800000000>, <0>, <600000000>,
+//                                    <600000000>, <1000000000>;
+//            assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru CLK_RKVDEC0_CORE>,
+//                              <&cru CLK_RKVDEC0_CA>, <&cru CLK_RKVDEC0_HEVC_CA>;
+//            assigned-clock-rates = <800000000>, <600000000>,
+//                                   <600000000>, <1000000000>;
+//            resets = <&cru SRST_A_RKVDEC0>, <&cru SRST_H_RKVDEC0>, <&cru SRST_RKVDEC0_CORE>,
+//                     <&cru SRST_RKVDEC0_CA>, <&cru SRST_RKVDEC0_HEVC_CA>;
+//            reset-names = "video_a", "video_h", "video_core",
+//                          "video_cabac", "video_hevc_cabac";
+//            rockchip,skip-pmu-idle-request;
+//            iommus = <&rkvdec0_mmu>;
+//            rockchip,srv = <&mpp_srv>;
+//            rockchip,ccu = <&rkvdec_ccu>;
+//            rockchip,core-mask = <0x00010001>;
+//            rockchip,task-capacity = <16>;
+//            rockchip,taskqueue-node = <9>;
+//            rockchip,sram = <&rkvdec0_sram>;
+//            /* rcb_iova: start and size 1M@4095M */
+//            rockchip,rcb-iova = <0xFFF00000 0x100000>;
+//            rockchip,rcb-info = <136 24576>, <137 49152>, <141 90112>, <140 49152>,
+//                                <139 180224>, <133 49152>, <134 8192>, <135 4352>,
+//                                <138 13056>, <142 291584>;
+//            rockchip,rcb-min-width = <512>;
+//            power-domains = <&power RK3588_PD_RKVDEC0>;
+//            status = "okay";
+//    };
+//    rkvdec0_mmu: iommu@fdc38700 {
+//            compatible = "rockchip,iommu";
+//            reg = <0x0 0xfdc38700 0x0 0x40>, <0x0 0xfdc38740 0x0 0x40>;
+//            interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH 0>;
+//            interrupt-names = "irq_rkvdec0_mmu";
+//            clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>;
+//            clock-names = "aclk", "iface";
+//            rockchip,disable-mmu-reset;
+//            rockchip,enable-cmd-retry;
+//            rockchip,shootdown-entire;
+//            rockchip,master-handle-irq;
+//            #iommu-cells = <0>;
+//            power-domains = <&power RK3588_PD_RKVDEC0>;
+//            status = "disabled";
+//    };
 
-    rkvdec0_mmu: iommu@fdc38700 {
-            compatible = "rockchip,iommu";
-            reg = <0x0 0xfdc38700 0x0 0x40>, <0x0 0xfdc38740 0x0 0x40>;
-            interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH 0>;
-            interrupt-names = "irq_rkvdec0_mmu";
-            clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>;
-            clock-names = "aclk", "iface";
-            rockchip,disable-mmu-reset;
-            rockchip,enable-cmd-retry;
-            rockchip,shootdown-entire;
-            rockchip,master-handle-irq;
-            #iommu-cells = <0>;
-            power-domains = <&power RK3588_PD_RKVDEC0>;
-            status = "disabled";
-    };
+//    rkvdec1: rkvdec-core@fdc48000 {
+//            compatible = "rockchip,rkv-decoder-v2";
+//            reg = <0x0 0xfdc48100 0x0 0x400>, <0x0 0xfdc48000 0x0 0x100>;
+//            reg-names = "regs", "link";
+//            interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH 0>;
+//            interrupt-names = "irq_rkvdec1";
+//            clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>, <&cru CLK_RKVDEC1_CORE>,
+//                     <&cru CLK_RKVDEC1_CA>, <&cru CLK_RKVDEC1_HEVC_CA>;
+//            clock-names = "aclk_vcodec", "hclk_vcodec", "clk_core",
+//                          "clk_cabac", "clk_hevc_cabac";
+//            rockchip,normal-rates = <800000000>, <0>, <600000000>,
+//                                    <600000000>, <1000000000>;
+//            assigned-clocks = <&cru ACLK_RKVDEC1>, <&cru CLK_RKVDEC1_CORE>,
+//                              <&cru CLK_RKVDEC1_CA>, <&cru CLK_RKVDEC1_HEVC_CA>;
+//            assigned-clock-rates = <800000000>, <600000000>,
+//                                   <600000000>, <1000000000>;
+//            resets = <&cru SRST_A_RKVDEC1>, <&cru SRST_H_RKVDEC1>, <&cru SRST_RKVDEC1_CORE>,
+//                     <&cru SRST_RKVDEC1_CA>, <&cru SRST_RKVDEC1_HEVC_CA>;
+//            reset-names = "video_a", "video_h", "video_core",
+//                          "video_cabac", "video_hevc_cabac";
+//            rockchip,skip-pmu-idle-request;
+//            iommus = <&rkvdec1_mmu>;
+//            rockchip,srv = <&mpp_srv>;
+//            rockchip,ccu = <&rkvdec_ccu>;
+//            rockchip,core-mask = <0x00020002>;
+//            rockchip,task-capacity = <16>;
+//            rockchip,taskqueue-node = <9>;
+//            rockchip,sram = <&rkvdec1_sram>;
+//            /* rcb_iova: start and size 1M@4094M */
+//            rockchip,rcb-iova = <0xFFE00000 0x100000>;
+//            rockchip,rcb-info = <136 24576>, <137 49152>, <141 90112>, <140 49152>,
+//                                <139 180224>, <133 49152>, <134 8192>, <135 4352>,
+//                                <138 13056>, <142 291584>;
+//            rockchip,rcb-min-width = <512>;
+//            power-domains = <&power RK3588_PD_RKVDEC1>;
+//            status = "okay";
+//    };
+//    rkvdec1_mmu: iommu@fdc48700 {
+//            compatible = "rockchip,iommu";
+//            reg = <0x0 0xfdc48700 0x0 0x40>, <0x0 0xfdc48740 0x0 0x40>;
+//            interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH 0>;
+//            interrupt-names = "irq_rkvdec1_mmu";
+//            clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>;
+//            clock-names = "aclk", "iface";
+//            rockchip,disable-mmu-reset;
+//            rockchip,enable-cmd-retry;
+//            rockchip,shootdown-entire;
+//            rockchip,master-handle-irq;
+//            #iommu-cells = <0>;
+//            power-domains = <&power RK3588_PD_RKVDEC1>;
+//            status = "disabled";
+//    };
 
-    rkvdec1: rkvdec-core@fdc48000 {
-            compatible = "rockchip,rkv-decoder-v2";
-            reg = <0x0 0xfdc48100 0x0 0x400>, <0x0 0xfdc48000 0x0 0x100>;
-            reg-names = "regs", "link";
-            interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH 0>;
-            interrupt-names = "irq_rkvdec1";
-            clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>, <&cru CLK_RKVDEC1_CORE>,
-                     <&cru CLK_RKVDEC1_CA>, <&cru CLK_RKVDEC1_HEVC_CA>;
-            clock-names = "aclk_vcodec", "hclk_vcodec", "clk_core",
-                          "clk_cabac", "clk_hevc_cabac";
-            rockchip,normal-rates = <800000000>, <0>, <600000000>,
-                                    <600000000>, <1000000000>;
-            assigned-clocks = <&cru ACLK_RKVDEC1>, <&cru CLK_RKVDEC1_CORE>,
-                              <&cru CLK_RKVDEC1_CA>, <&cru CLK_RKVDEC1_HEVC_CA>;
-            assigned-clock-rates = <800000000>, <600000000>,
-                                   <600000000>, <1000000000>;
-            resets = <&cru SRST_A_RKVDEC1>, <&cru SRST_H_RKVDEC1>, <&cru SRST_RKVDEC1_CORE>,
-                     <&cru SRST_RKVDEC1_CA>, <&cru SRST_RKVDEC1_HEVC_CA>;
-            reset-names = "video_a", "video_h", "video_core",
-                          "video_cabac", "video_hevc_cabac";
-            rockchip,skip-pmu-idle-request;
-            iommus = <&rkvdec1_mmu>;
-            rockchip,srv = <&mpp_srv>;
-            rockchip,ccu = <&rkvdec_ccu>;
-            rockchip,core-mask = <0x00020002>;
-            rockchip,task-capacity = <16>;
-            rockchip,taskqueue-node = <9>;
-            rockchip,sram = <&rkvdec1_sram>;
-            /* rcb_iova: start and size 1M@4094M */
-            rockchip,rcb-iova = <0xFFE00000 0x100000>;
-            rockchip,rcb-info = <136 24576>, <137 49152>, <141 90112>, <140 49152>,
-                                <139 180224>, <133 49152>, <134 8192>, <135 4352>,
-                                <138 13056>, <142 291584>;
-            rockchip,rcb-min-width = <512>;
-            power-domains = <&power RK3588_PD_RKVDEC1>;
-            status = "okay";
-    };
-
-    rkvdec1_mmu: iommu@fdc48700 {
-            compatible = "rockchip,iommu";
-            reg = <0x0 0xfdc48700 0x0 0x40>, <0x0 0xfdc48740 0x0 0x40>;
-            interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH 0>;
-            interrupt-names = "irq_rkvdec1_mmu";
-            clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>;
-            clock-names = "aclk", "iface";
-            rockchip,disable-mmu-reset;
-            rockchip,enable-cmd-retry;
-            rockchip,shootdown-entire;
-            rockchip,master-handle-irq;
-            #iommu-cells = <0>;
-            power-domains = <&power RK3588_PD_RKVDEC1>;
-            status = "disabled";
-    };
-
-    vdpu: vdpu@fdb50400 {
-        compatible = "rockchip,vpu-decoder-v2";
-        reg = <0x0 0xfdb50400 0x0 0x400>;
-        interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH 0>;
-        interrupt-names = "irq_vdpu";
-        clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
-        clock-names = "aclk_vcodec", "hclk_vcodec";
-        rockchip,normal-rates = <594000000>, <0>;
-        assigned-clocks = <&cru ACLK_VPU>;
-        assigned-clock-rates = <594000000>;
-        resets = <&cru SRST_A_VPU>, <&cru SRST_H_VPU>;
-        reset-names = "shared_video_a", "shared_video_h";
-        rockchip,skip-pmu-idle-request;
-        rockchip,disable-auto-freq;
-        iommus = <&vdpu_mmu>;
-        rockchip,srv = <&mpp_srv>;
-        rockchip,taskqueue-node = <0>;
-        rockchip,resetgroup-node = <0>;
-        power-domains = <&power RK3588_PD_VDPU>;
-        status = "okay";
-    };
-
-    vdpu_mmu: iommu@fdb50800 {
-        compatible = "rockchip,iommu";
-        reg = <0x0 0xfdb50800 0x0 0x40>;
-        interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH 0>;
-        interrupt-names = "irq_vdpu_mmu";
-        clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
-        clock-names = "aclk", "iface";
-        power-domains = <&power RK3588_PD_VDPU>;
-        #iommu-cells = <0>;
-        status = "disabled";
-    };
+//    vdpu: vdpu@fdb50400 {
+//        compatible = "rockchip,vpu-decoder-v2";
+//        reg = <0x0 0xfdb50400 0x0 0x400>;
+//        interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_HIGH 0>;
+//        interrupt-names = "irq_vdpu";
+//        clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
+//        clock-names = "aclk_vcodec", "hclk_vcodec";
+//        rockchip,normal-rates = <594000000>, <0>;
+//        assigned-clocks = <&cru ACLK_VPU>;
+//        assigned-clock-rates = <594000000>;
+//        resets = <&cru SRST_A_VPU>, <&cru SRST_H_VPU>;
+//        reset-names = "shared_video_a", "shared_video_h";
+//        rockchip,skip-pmu-idle-request;
+//        rockchip,disable-auto-freq;
+//        iommus = <&vdpu_mmu>;
+//        rockchip,srv = <&mpp_srv>;
+//        rockchip,taskqueue-node = <0>;
+//        rockchip,resetgroup-node = <0>;
+//        power-domains = <&power RK3588_PD_VDPU>;
+//        status = "okay";
+//    };
+//    vdpu_mmu: iommu@fdb50800 {
+//        compatible = "rockchip,iommu";
+//        reg = <0x0 0xfdb50800 0x0 0x40>;
+//        interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH 0>;
+//        interrupt-names = "irq_vdpu_mmu";
+//        clocks = <&cru ACLK_VPU>, <&cru HCLK_VPU>;
+//        clock-names = "aclk", "iface";
+//        power-domains = <&power RK3588_PD_VDPU>;
+//        #iommu-cells = <0>;
+//        status = "disabled";
+//    };
 
 
-    gpu_grf: syscon@fd5a0000 {
-        compatible = "rockchip,rk3588-gpu-grf", "syscon";
-        reg = <0x0 0xfd5a0000 0x0 0x100>;
-    };
-
-    fec0_mmu: iommu@fdcd0f00 {
-        compatible = "rockchip,iommu";
-        reg = <0x0 0xfdcd0f00 0x0 0x100>;
-        interrupts = <GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH 0>;
-        interrupt-names = "fec0_mmu";
-        clocks = <&cru ACLK_FISHEYE0>, <&cru HCLK_FISHEYE0>, <&cru CLK_FISHEYE0_CORE>;
-        clock-names = "aclk", "iface", "pclk";
-        power-domains = <&power RK3588_PD_FEC>;
-        #iommu-cells = <0>;
-        rockchip,disable-mmu-reset;
-        status = "disabled";
-    };
-
-    fec1_mmu: iommu@fdcd8f00 {
-        compatible = "rockchip,iommu";
-        reg = <0x0 0xfdcd8f00 0x0 0x100>;
-        interrupts = <GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH 0>;
-        interrupt-names = "fec1_mmu";
-        clocks = <&cru ACLK_FISHEYE1>, <&cru HCLK_FISHEYE1>,  <&cru CLK_FISHEYE1_CORE>;
-        clock-names = "aclk", "iface", "pclk";
-        power-domains = <&power RK3588_PD_FEC>;
-        #iommu-cells = <0>;
-        rockchip,disable-mmu-reset;
-        status = "disabled";
-    };
+//    gpu_grf: syscon@fd5a0000 {
+//        compatible = "rockchip,rk3588-gpu-grf", "syscon";
+//        reg = <0x0 0xfd5a0000 0x0 0x100>;
+//    };
 
     hdmi1: hdmi@fdea0000 {
         compatible = "rockchip,rk3588-dw-hdmi";
@@ -583,29 +556,29 @@
       *       output driver? (Beware: In this context, RGB does not refer to the LEDs, instead, if refers to the analog/VGA
       *       output!
       */
-    rgb: rgb {
-        compatible = "rockchip,rk3588-rgb";
-        pinctrl-names = "default";
-        pinctrl-0 = <&bt1120_pins>;
-        status = "disabled";
-
-        ports {
-            #address-cells = <1>;
-            #size-cells = <0>;
-
-            port@0 {
-                reg = <0>;
-                #address-cells = <1>;
-                #size-cells = <0>;
-
+//    rgb: rgb {
+//        compatible = "rockchip,rk3588-rgb";
+//        pinctrl-names = "default";
+//        pinctrl-0 = <&bt1120_pins>;
+//        status = "disabled";
+//
+//        ports {
+//            #address-cells = <1>;
+//            #size-cells = <0>;
+//
+//            port@0 {
+//                reg = <0>;
+//                #address-cells = <1>;
+//                #size-cells = <0>;
+//
 //                rgb_in_vp3: endpoint@2 {
 //                    reg = <2>;
 //                    remote-endpoint = <&vp3_out_rgb>;
 //                    status = "disabled";
 //                };
-            };
-        };
-    };
+//            };
+//        };
+//    };
 };
 
 &vop {
@@ -616,9 +589,9 @@
     status = "okay";
 };
 
-&dsi0 {
-    status = "okay";
-};
+//&dsi0 {
+//    status = "okay";
+//};
 
 
 // ======================================================================================================= HDMI0 -> VP0
@@ -680,8 +653,8 @@
     clock-names = "hdmi0_phy_pll"; */
 };
 
-&vdpu {
-    status = "okay";
-};
+//&vdpu {
+//    status = "okay";
+//};
 
 &av1d {	status = "okay"; };
