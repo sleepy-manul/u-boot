@@ -9,105 +9,92 @@
 #include "rk3588-firefly-itx-3588j-i2c6.dtsi"
 
 / {
-    aliases {
-        mmc0 = &sdhci;
-        mmc1 = &sdmmc;
-    };
+	aliases {
+		mmc0 = &sdhci;
+		mmc1 = &sdmmc;
+	};
 
-    chosen {
-        u-boot,spl-boot-order = &sdmmc, &sdhci;
-    };
+	chosen {
+		u-boot,spl-boot-order = &sdmmc, &sdhci;
+	};
 
-    firmware: firmware {
-        scmi: scmi {
-            compatible = "arm,scmi-smc";
-            shmem = <&scmi_shmem>;
-            arm,smc-id = <0x82000010>;
-            #address-cells = <1>;
-            #size-cells = <0>;
+	firmware: firmware {
+		scmi: scmi {
+			compatible = "arm,scmi-smc";
+			shmem = <&scmi_shmem>;
+			arm,smc-id = <0x82000010>;
+			#address-cells = <1>;
+			#size-cells = <0>;
 
-            scmi_clk: protocol@14 {
-                reg = <0x14>;
-                #clock-cells = <1>;
+			scmi_clk: protocol@14 {
+				reg = <0x14>;
+				#clock-cells = <1>;
 
-                assigned-clocks = <&scmi_clk SCMI_CLK_CPUL>,
-                                  <&scmi_clk SCMI_CLK_CPUB01>,
-                                  <&scmi_clk SCMI_CLK_CPUB23>;
-                assigned-clock-rates = <816000000>,
-                                       <816000000>,
-                                       <816000000>;
-            };
+				assigned-clocks = <&scmi_clk SCMI_CLK_CPUL>, <&scmi_clk SCMI_CLK_CPUB01>,
+				                  <&scmi_clk SCMI_CLK_CPUB23>;
+				assigned-clock-rates = <816000000>, <816000000>, <816000000>;
+			};
 
-            scmi_reset: protocol@16 {
-                reg = <0x16>;
-                #reset-cells = <1>;
-            };
-        };
+			scmi_reset: protocol@16 {
+				reg = <0x16>;
+				#reset-cells = <1>;
+			};
+		};
 
-        sdei: sdei {
-            compatible = "arm,sdei-1.0";
-            method = "smc";
-        };
-    };
+		sdei: sdei {
+			compatible = "arm,sdei-1.0";
+			method = "smc";
+		};
+	};
 
-    secure-otp@fe3a0000 {
-        bootph-pre-ram;
-        compatible = "rockchip,rk3588-secure-otp";
-        reg = <0x0 0xfe3a0000 0x0 0x4000>;
-    };
+	secure-otp@fe3a0000 {
+		bootph-pre-ram;
+		compatible = "rockchip,rk3588-secure-otp";
+		reg = <0x0 0xfe3a0000 0x0 0x4000>;
+	};
 
 };
 
-
 &firmware {
-    bootph-pre-ram;
-    status = "okay";
+	bootph-pre-ram;
+	status = "okay";
 };
 
 &gpio0 {
-    bootph-pre-ram;
-    status = "okay";
+	bootph-pre-ram;
+	status = "okay";
 };
 
 &gpio1 {
-    bootph-all;
-    status = "okay";
+	bootph-all;
+	status = "okay";
 };
 
 &gpio2 {
-    bootph-all;
-    status = "okay";
+	bootph-all;
+	status = "okay";
 };
 
 &gpio3 {
-    bootph-all;
-    status = "okay";
+	bootph-all;
+	status = "okay";
 };
 
 &gpio4 {
-    bootph-all;
-    status = "okay";
+	bootph-all;
+	status = "okay";
 };
 
-&scmi {
-    bootph-pre-ram;
+&i2c6 {
+	bootph-pre-ram;
 };
 
-&scmi_clk {
-    bootph-pre-ram;
+&ioc {
+	bootph-pre-ram;
 };
 
-&pmu_sram {
-    bootph-pre-ram;
-};
-
-&scmi_shmem {
-    bootph-pre-ram;
-};
-
-&xin24m {
-    bootph-all;
-    status = "okay";
+&pca9555 {
+	bootph-pre-ram;
 };
 
 // This was used in the BSP 2017 U-Boot. It offers accelerated
@@ -119,52 +106,78 @@
     status = "okay";
 }; */
 
-&i2c6 {
-    bootph-pre-ram;
-};
-&pca9555 {
-    bootph-pre-ram;
-};
-&vcc_sdcard_pwr_en {
-    bootph-pre-ram;
-};
-&vccio_sd_s0 {
-    bootph-pre-ram;
+&pcfg_pull_up_drv_level_2 {
+	bootph-pre-ram;
 };
 
-&sys_grf {
-    bootph-pre-ram;
-    status = "okay";
+&pcfg_pull_up {
+	bootph-pre-ram;
+};
+
+&pcfg_pull_none {
+	bootph-pre-ram;
 };
 
 &pcie30_phy_grf {
-    bootph-all;
-    status = "okay";
+	bootph-all;
+	status = "okay";
 };
 
 &php_grf {
-    bootph-all;
-    status = "okay";
+	bootph-all;
+	status = "okay";
+};
+
+&pinctrl {
+	bootph-all;
+
+	sdmmc {
+		bootph-all;
+
+		sdmmc_bus4: sdmmc-bus4 {
+			bootph-all;
+		};
+
+		sdmmc_clk: sdmmc-clk {
+			bootph-all;
+		};
+
+		sdmmc_cmd: sdmmc-cmd {
+			bootph-all;
+		};
+
+		sdmmc_det: sdmmc-det {
+			bootph-all;
+		};
+
+		sdmmc_pwren: sdmmc-pwren {
+			bootph-all;
+		};
+	};
 };
 
 &pipe_phy0_grf {
-    bootph-all;
-    status = "okay";
+	bootph-all;
+	status = "okay";
 };
 
 &pipe_phy1_grf {
-    bootph-all;
-    status = "okay";
+	bootph-all;
+	status = "okay";
 };
 
 &pipe_phy2_grf {
-    bootph-all;
-    status = "okay";
+	bootph-all;
+	status = "okay";
 };
 
-&uart2 {
-    bootph-pre-ram;
-    status = "okay";
+&pmu_sram {
+	bootph-pre-ram;
+};
+
+&sys_grf {
+	bootph-pre-ram;
+	status = "okay";
 };
 
 // This was used in the BSP 2017 U-Boot. It offers accelerated
@@ -181,101 +194,77 @@
 //    status = "okay";
 //};
 
-&sfc {
-    bootph-pre-ram;
-    u-boot,spl-sfc-no-dma;
+&saradc {
+	bootph-all;
+	status = "okay";
 };
 
-&saradc {
-    bootph-all;
-    status = "okay";
+&scmi {
+	bootph-pre-ram;
+};
+
+&scmi_clk {
+	bootph-pre-ram;
+};
+
+&scmi_shmem {
+	bootph-pre-ram;
 };
 
 &sdmmc {
-    status = "okay";
+	status = "okay";
 };
 
 &sdhci {
-    bootph-pre-ram;
-    status = "okay";
-    /delete-property/ mmc-hs200-1_8v;
-    mmc-hs400-1_8v;
-    mmc-hs400-enhanced-strobe;
-    /delete-property/ cap-mmc-highspeed;
+	bootph-pre-ram;
+	status = "okay";
+	/delete-property/ mmc-hs200-1_8v;
+	mmc-hs400-1_8v;
+	mmc-hs400-enhanced-strobe;
+	/delete-property/ cap-mmc-highspeed;
 };
 
-&usb2phy0_grf {
-    bootph-all;
+&sfc {
+	bootph-pre-ram;
+	u-boot,spl-sfc-no-dma;
+};
+
+// DEBUG-Port
+&uart2 {
+	bootph-pre-ram;
+	status = "okay";
 };
 
 &u2phy0 {
-    bootph-all;
-    status = "okay";
+	bootph-all;
+	status = "okay";
 };
 
 &u2phy0_otg {
-    bootph-all;
+	bootph-all;
 };
 
 &u2phy1 {
-    status = "okay";
+	status = "okay";
 };
 
 &u2phy1_otg {
-    status = "okay";
+	status = "okay";
 };
 
-
-
-/* Support SPL-PINCTRL:
- * 1. ioc
- * 2. pinctrl(sdmmc)
- * 3. gpio if need
- */
-&ioc {
-    bootph-pre-ram;
+&usb2phy0_grf {
+	bootph-all;
 };
 
-/*
-&pinctrl {
-    bootph-all;
-
-    sdmmc {
-        bootph-all;
-        sdmmc_bus4: sdmmc-bus4 {
-            bootph-all;
-        };
-
-        sdmmc_clk: sdmmc-clk {
-            bootph-all;
-        };
-
-        sdmmc_cmd: sdmmc-cmd {
-            bootph-all;
-        };
-
-        sdmmc_det: sdmmc-det {
-            bootph-all;
-        };
-
-        sdmmc_pwren: sdmmc-pwren {
-            bootph-all;
-        };
-    };
-
-
-};
-*/
-
-&pcfg_pull_up_drv_level_2 {
-    bootph-pre-ram;
+&vcc_sdcard_pwr_en {
+	bootph-pre-ram;
 };
 
-&pcfg_pull_up {
-    bootph-pre-ram;
+&vccio_sd_s0 {
+	bootph-pre-ram;
 };
 
-&pcfg_pull_none
-{
-    bootph-pre-ram;
+&xin24m {
+	bootph-all;
+	status = "okay";
 };

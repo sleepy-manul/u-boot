@@ -54,37 +54,39 @@
 
 	chosen {
 		stdout-path = "serial2:1500000n8";
-		bootargs = "irqchip.gicv3_pseudo_nmi=0 coherent_pool=1m systemd.gpt_auto=0 cgroup_enable=memory swapaccount=1 net.ifnames=0 ignore_loglevel initcall_debug";
+		bootargs =
+		"irqchip.gicv3_pseudo_nmi=0 coherent_pool=1m systemd.gpt_auto=0 cgroup_enable=memory swapaccount=1 net.ifnames=0
+		ignore_loglevel initcall_debug";
 	};
 
-//	dmc: dmc {
-//		compatible = "rockchip,rk3588-dmc";
-//		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH 0>;
-//		interrupt-names = "complete";
-//		devfreq-events = <&dfi>;
-//		clocks = <&scmi_clk 4>;
-//		clock-names = "dmc_clk";
-//		operating-points-v2 = <&dmc_opp_table>;
-//		upthreshold = <40>;
-//		downdifferential = <20>;
-//		mem-supply = <&vdd_log_s0>;
-//		system-status-level = <
-//									  // system status        freq level
-//									  SYS_STATUS_NORMAL       DMC_FREQ_LEVEL_MID_HIGH
-//									  SYS_STATUS_REBOOT       DMC_FREQ_LEVEL_HIGH
-//									  SYS_STATUS_SUSPEND      DMC_FREQ_LEVEL_LOW
-//									  SYS_STATUS_VIDEO_4K     DMC_FREQ_LEVEL_MID_HIGH
-//									  SYS_STATUS_VIDEO_4K_10B DMC_FREQ_LEVEL_MID_HIGH
-//									  SYS_STATUS_VIDEO_SVEP   DMC_FREQ_LEVEL_MID_HIGH
-//									  SYS_STATUS_BOOST        DMC_FREQ_LEVEL_HIGH
-//									  SYS_STATUS_ISP          DMC_FREQ_LEVEL_HIGH
-//									  SYS_STATUS_PERFORMANCE  DMC_FREQ_LEVEL_HIGH
-//									  SYS_STATUS_DUALVIEW     DMC_FREQ_LEVEL_HIGH
-//									  SYS_STATUS_HDMIRX       DMC_FREQ_LEVEL_HIGH
-//							  >;
-//		auto-freq-en = <1>;
-//		status = "okay";
-//	};
+	//	dmc: dmc {
+	//		compatible = "rockchip,rk3588-dmc";
+	//		interrupts = <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH 0>;
+	//		interrupt-names = "complete";
+	//		devfreq-events = <&dfi>;
+	//		clocks = <&scmi_clk 4>;
+	//		clock-names = "dmc_clk";
+	//		operating-points-v2 = <&dmc_opp_table>;
+	//		upthreshold = <40>;
+	//		downdifferential = <20>;
+	//		mem-supply = <&vdd_log_s0>;
+	//		system-status-level = <
+	//									  // system status        freq level
+	//									  SYS_STATUS_NORMAL       DMC_FREQ_LEVEL_MID_HIGH
+	//									  SYS_STATUS_REBOOT       DMC_FREQ_LEVEL_HIGH
+	//									  SYS_STATUS_SUSPEND      DMC_FREQ_LEVEL_LOW
+	//									  SYS_STATUS_VIDEO_4K     DMC_FREQ_LEVEL_MID_HIGH
+	//									  SYS_STATUS_VIDEO_4K_10B DMC_FREQ_LEVEL_MID_HIGH
+	//									  SYS_STATUS_VIDEO_SVEP   DMC_FREQ_LEVEL_MID_HIGH
+	//									  SYS_STATUS_BOOST        DMC_FREQ_LEVEL_HIGH
+	//									  SYS_STATUS_ISP          DMC_FREQ_LEVEL_HIGH
+	//									  SYS_STATUS_PERFORMANCE  DMC_FREQ_LEVEL_HIGH
+	//									  SYS_STATUS_DUALVIEW     DMC_FREQ_LEVEL_HIGH
+	//									  SYS_STATUS_HDMIRX       DMC_FREQ_LEVEL_HIGH
+	//							  >;
+	//		auto-freq-en = <1>;
+	//		status = "okay";
+	//	};
 
 	fan: pwm-fan {
 		compatible = "pwm-fan";
@@ -113,6 +115,13 @@
 			color = <LED_COLOR_ID_YELLOW>;
 		};
 
+	};
+
+	rfkill {
+		compatible = "rfkill-gpio";
+		label = "rfkill-pcie-wlan";
+		radio-type = "wlan";
+		shutdown-gpios = <&gpio4 RK_PA2 GPIO_ACTIVE_HIGH>;
 	};
 
 	vcc_sata_pwr_en: vcc-sata-pwr-en-regulator {
@@ -201,74 +210,6 @@
 		gpio = <&pca9555 PCA_IO1_5 GPIO_ACTIVE_HIGH>;  //PCA_IO 15
 		status = "disabled";
 	};
-
-	rfkill {
-		compatible = "rfkill-gpio";
-		label = "rfkill-pcie-wlan";
-		radio-type = "wlan";
-		shutdown-gpios = <&gpio4 RK_PA2 GPIO_ACTIVE_HIGH>;
-	};
-};
-
-&package_thermal {
-	polling-delay = <1000>;
-
-	trips {
-		package_fan0: package-fan0 {
-			hysteresis = <5000>;
-			temperature = <55000>;
-			type = "active";
-		};
-		package_fan1: package-fan1 {
-			hysteresis = <5000>;
-			temperature = <65000>;
-			type = "active";
-		};
-	};
-
-	cooling-maps {
-		map1 {
-			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
-			trip = <&package_fan0>;
-		};
-		map2 {
-			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
-			trip = <&package_fan1>;
-		};
-	};
-};
-
-&vcc_sdcard_pwr_en{
-	gpio = <&pca9555 PCA_IO1_5 GPIO_ACTIVE_HIGH>;  //PCA_IO 15
-	status = "okay";
-};
-
-&vcc_fan_pwr_en {
-	status = "okay";
-	gpio = <&pca9555 PCA_IO1_3 GPIO_ACTIVE_HIGH>;  //PCA_IO 13
-};
-
-
-&sdmmc {
-	bus-width = <4>;
-	cap-mmc-highspeed;
-	cap-sd-highspeed;
-	disable-wp;
-	max-frequency = <150000000>;
-	no-mmc;
-	no-sdio;
-	sd-uhs-sdr104;
-	vqmmc-supply = <&vccio_sd_s0>;
-	status = "okay";
-};
-
-&sdhci {
-	bus-width = <8>;
-	no-sd;
-	no-sdio;
-	non-removable;
-	mmc-hs200-1_8v;
-	status = "okay";
 };
 
 &combphy0_ps {
@@ -315,6 +256,99 @@
 	cpu-supply = <&vdd_cpu_lit_s0>;
 };
 
+&dfi {
+	status = "okay";
+};
+
+// gamc0, a.k.a. ethernet0
+&gmac0 {
+	clock_in_out = "output";
+	phy-handle = <&rgmii_phy0>;
+	phy-mode = "rgmii-rxid";
+	pinctrl-0 = <&gmac0_miim
+	             &gmac0_tx_bus2
+	             &gmac0_rx_bus2
+	             &gmac0_rgmii_clk
+	             &gmac0_rgmii_bus>;
+	pinctrl-names = "default";
+	rx_delay = <0x00>;
+	tx_delay = <0x45>;
+	snps,reset-gpio = <&gpio3 RK_PC7 GPIO_ACTIVE_LOW>;
+	// Reset time is 20ms, 100ms for rtl8211f
+	snps,reset-delays-us = <0 20000 100000>;
+	snps,reset-active-low;
+	status = "okay";
+};
+
+// from: https://wiki.t-firefly.com/en/Core-3588J/usage_ethernet.html
+&gmac0_tx_bus2 {
+	rockchip,pins =
+		/* gmac0_txd0 */
+		<2 RK_PB6 1 &pcfg_pull_up_drv_level_6>,
+		/* gmac0_txd1 */
+		<2 RK_PB7 1 &pcfg_pull_up_drv_level_6>,
+		/* gmac0_txen */
+		<2 RK_PC0 1 &pcfg_pull_none>;
+};
+
+// from: https://wiki.t-firefly.com/en/Core-3588J/usage_ethernet.html
+&gmac0_rgmii_bus {
+	rockchip,pins =
+		/* gmac0_rxd2 */
+		<2 RK_PA6 1 &pcfg_pull_none>,
+		/* gmac0_rxd3 */
+		<2 RK_PA7 1 &pcfg_pull_none>,
+		/* gmac0_txd2 */
+		<2 RK_PB1 1 &pcfg_pull_up_drv_level_6>,
+		/* gmac0_txd3 */
+		<2 RK_PB2 1 &pcfg_pull_up_drv_level_6>;
+};
+
+// gmac1, a.k.a. ethernet1
+&gmac1 {
+	// Use rgmii-rxid mode to disable rx delay inside Soc
+	phy-mode = "rgmii-rxid";
+	phy-handle = <&rgmii_phy1>;
+	clock_in_out = "output";
+
+	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
+	snps,reset-active-low;
+	// Reset time is 20ms, 100ms for rtl8211f
+	snps,reset-delays-us = <0 20000 100000>;
+
+	pinctrl-names = "default";
+	pinctrl-0 = <&gmac1_miim
+	             &gmac1_tx_bus2
+	             &gmac1_rx_bus2
+	             &gmac1_rgmii_clk
+	             &gmac1_rgmii_bus>;
+
+	tx_delay = <0x42>;
+	status = "okay";
+};
+
+&gmac1_tx_bus2 {
+	rockchip,pins =
+	/* gmac1_txd0 */
+		<3 RK_PB3 1 &pcfg_pull_up_drv_level_6>,
+	/* gmac1_txd1 */
+		<3 RK_PB4 1 &pcfg_pull_up_drv_level_6>,
+	/* gmac1_txen */
+		<3 RK_PB5 1 &pcfg_pull_none>;
+};
+
+&gmac1_rgmii_bus {
+	rockchip,pins =
+	/* gmac1_rxd2 */
+		<3 RK_PA2 1 &pcfg_pull_none>,
+	/* gmac1_rxd3 */
+		<3 RK_PA3 1 &pcfg_pull_none>,
+	/* gmac1_txd2 */
+		<3 RK_PA0 1 &pcfg_pull_up_drv_level_6>,
+	/* gmac1_txd3 */
+		<3 RK_PA1 1 &pcfg_pull_up_drv_level_6>;
+};
+
 &i2c1 {
 	status = "okay";
 	pinctrl-names = "default";
@@ -330,6 +364,7 @@
 		regulator-ramp-delay = <2300>;
 		regulator-boot-on;
 		regulator-always-on;
+
 		regulator-state-mem {
 			regulator-off-in-suspend;
 		};
@@ -347,52 +382,20 @@
 	pinctrl-0 = <&i2c4m1_xfer>;
 };
 
+&i2c6 {
+	clock-frequency = <400000>;
+	status = "okay";
+};
+
 &i2c7 {
 	status = "okay";
 	pinctrl-0 = <&i2c7m2_xfer>;
-
 };
 
 &i2c8 {
 	status = "okay";
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2c8m2_xfer>;
-};
-
-&uart2 {
-	pinctrl-0 = <&uart2m0_xfer>;
-	status = "okay";
-};
-
-// gamc0, a.k.a. ethernet0
-&gmac0 {
-	clock_in_out = "output";
-	phy-handle = <&rgmii_phy0>;
-	phy-mode = "rgmii-rxid";
-	pinctrl-0 = <&gmac0_miim
-				 &gmac0_tx_bus2
-				 &gmac0_rx_bus2
-				 &gmac0_rgmii_clk
-				 &gmac0_rgmii_bus>;
-	pinctrl-names = "default";
-	rx_delay = <0x00>;
-	tx_delay = <0x45>;
-	snps,reset-gpio = <&gpio3 RK_PC7 GPIO_ACTIVE_LOW>;
-	// Reset time is 20ms, 100ms for rtl8211f
-	snps,reset-delays-us = <0 20000 100000>;
-	snps,reset-active-low;
-	status = "okay";
-};
-
-// from: https://wiki.t-firefly.com/en/Core-3588J/usage_ethernet.html
-&gmac0_tx_bus2 {
-	rockchip,pins =
-	/* gmac0_txd0 */
-			<2 RK_PB6 1 &pcfg_pull_up_drv_level_6>,
-	/* gmac0_txd1 */
-			<2 RK_PB7 1 &pcfg_pull_up_drv_level_6>,
-	/* gmac0_txen */
-			<2 RK_PC0 1 &pcfg_pull_none>;
 };
 
 &mdio0 {
@@ -404,44 +407,8 @@
 		pinctrl-0 = <&rtl8211f_rst>;
 		reset-assert-us = <20000>;
 		reset-deassert-us = <100000>;
-		// RK_PB3		11 -> Pin 4-11
 		reset-gpios = <&gpio4 RK_PB3 GPIO_ACTIVE_LOW>;
 	};
-};
-
-// from: https://wiki.t-firefly.com/en/Core-3588J/usage_ethernet.html
-&gmac0_rgmii_bus {
-	rockchip,pins =
-	/* gmac0_rxd2 */
-			<2 RK_PA6 1 &pcfg_pull_none>,
-	/* gmac0_rxd3 */
-			<2 RK_PA7 1 &pcfg_pull_none>,
-	/* gmac0_txd2 */
-			<2 RK_PB1 1 &pcfg_pull_up_drv_level_6>,
-	/* gmac0_txd3 */
-			<2 RK_PB2 1 &pcfg_pull_up_drv_level_6>;
-};
-// gmac1, a.k.a. ethernet1
-&gmac1 {
-	// Use rgmii-rxid mode to disable rx delay inside Soc
-	phy-mode = "rgmii-rxid";
-	phy-handle = <&rgmii_phy1>;
-	clock_in_out = "output";
-
-	snps,reset-gpio = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
-	snps,reset-active-low;
-	// Reset time is 20ms, 100ms for rtl8211f
-	snps,reset-delays-us = <0 20000 100000>;
-
-	pinctrl-names = "default";
-	pinctrl-0 = <&gmac1_miim
-				 &gmac1_tx_bus2
-				 &gmac1_rx_bus2
-				 &gmac1_rgmii_clk
-				 &gmac1_rgmii_bus>;
-
-	tx_delay = <0x42>;
-	status = "okay";
 };
 
 &mdio1 {
@@ -460,26 +427,41 @@
 	};
 };
 
-&gmac1_tx_bus2 {
-	rockchip,pins =
-	/* gmac1_txd0 */
-			<3 RK_PB3 1 &pcfg_pull_up_drv_level_6>,
-	/* gmac1_txd1 */
-			<3 RK_PB4 1 &pcfg_pull_up_drv_level_6>,
-	/* gmac1_txen */
-			<3 RK_PB5 1 &pcfg_pull_none>;
+&package_thermal {
+	polling-delay = <1000>;
+
+	trips {
+		package_fan0: package-fan0 {
+			hysteresis = <5000>;
+			temperature = <55000>;
+			type = "active";
+		};
+
+		package_fan1: package-fan1 {
+			hysteresis = <5000>;
+			temperature = <65000>;
+			type = "active";
+		};
+	};
+
+	cooling-maps {
+		map1 {
+			cooling-device = <&fan THERMAL_NO_LIMIT 1>;
+			trip = <&package_fan0>;
+		};
+
+		map2 {
+			cooling-device = <&fan 2 THERMAL_NO_LIMIT>;
+			trip = <&package_fan1>;
+		};
+	};
 };
 
-&gmac1_rgmii_bus {
-	rockchip,pins =
-	/* gmac1_rxd2 */
-			<3 RK_PA2 1 &pcfg_pull_none>,
-	/* gmac1_rxd3 */
-			<3 RK_PA3 1 &pcfg_pull_none>,
-	/* gmac1_txd2 */
-			<3 RK_PA0 1 &pcfg_pull_up_drv_level_6>,
-	/* gmac1_txd3 */
-			<3 RK_PA1 1 &pcfg_pull_up_drv_level_6>;
+&pcie2x1l0 {
+	reset-gpios = <&gpio1 RK_PB4 GPIO_ACTIVE_HIGH>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&wifi_poweren_gpio>, <&bt_reset_gpio>, <&uart6_gpios>, <&bt_irq_gpio>, <&bt_wake_gpio>;
+	status = "okay";
 };
 
 // pcie3.0 x 4 slot
@@ -495,46 +477,29 @@
 	status = "okay";
 };
 
-&pcie2x1l0 {
-	reset-gpios = <&gpio1 RK_PB4 GPIO_ACTIVE_HIGH>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&wifi_poweren_gpio>, <&bt_reset_gpio>, <&uart6_gpios>, <&bt_irq_gpio>, <&bt_wake_gpio>;
-	status = "okay";
-};
-
-&vcc3v3_pcie30 {
-	gpios = <&gpio2 RK_PC5 GPIO_ACTIVE_HIGH>;
-	startup-delay-us = <5000>;
-	status = "okay";
-};
-
-&vcc5v0_host {
-	gpio = <&pca9555 PCA_IO0_5 GPIO_ACTIVE_HIGH>;
-	vin-supply = <&vcc5v0_usb>;
-	status = "okay";
-};
-
-// SATA
-&combphy0_ps {
-	status = "okay";
-};
 &sata0 {
 	status = "okay";
 };
 
-&vcc_sata_pwr_en {
-	status = "okay";
-	gpio = <&pca9555 PCA_IO1_2 GPIO_ACTIVE_HIGH>;  //PCA_IO 12
-};
-
-// i2c6
-&i2c6 {
-	clock-frequency = <400000>; // For others Display Port Screen
+&sdhci {
+	bus-width = <8>;
+	no-sd;
+	no-sdio;
+	non-removable;
+	mmc-hs200-1_8v;
 	status = "okay";
 };
 
-// pca9555
-&pca9555 {
+&sdmmc {
+	bus-width = <4>;
+	cap-mmc-highspeed;
+	cap-sd-highspeed;
+	disable-wp;
+	max-frequency = <150000000>;
+	no-mmc;
+	no-sdio;
+	sd-uhs-sdr104;
+	vqmmc-supply = <&vccio_sd_s0>;
 	status = "okay";
 };
 
@@ -543,12 +508,6 @@
 	dp {
 		dp1_hpd: dp1-hpd {
 			rockchip,pins = <1 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-
-	leds {
-		leds_gpio: leds-gpio {
-			rockchip,pins = <1 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
 
@@ -564,12 +523,6 @@
 		};
 	};
 
-	rtl8211f {
-		rtl8211f_rst: rtl8211f-rst {
-			rockchip,pins = <4 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-
 	hym8563 {
 		hym8563_int: hym8563-int {
 			rockchip,pins = <0 RK_PB0 RK_FUNC_GPIO &pcfg_pull_up>;
@@ -582,11 +535,33 @@
 		};
 	};
 
+	leds {
+		leds_gpio: leds-gpio {
+			rockchip,pins = <1 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+
+	pcie3 {
+		pcie3_rst: pcie3-rst {
+			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+
+		vcc3v3_pcie30_en: vcc3v3-pcie30-en {
+			rockchip,pins = <2 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+
+	rtl8211f {
+		rtl8211f_rst: rtl8211f-rst {
+			rockchip,pins = <4 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+
 	touch {
 		touch_gpio: touch-gpio {
 			rockchip,pins =
-					<0 RK_PD5 RK_FUNC_GPIO &pcfg_pull_up>,
-					<0 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
+				<0 RK_PD5 RK_FUNC_GPIO &pcfg_pull_up>,
+				<0 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
 
@@ -624,16 +599,6 @@
 		};
 	};
 
-	pcie3 {
-		pcie3_rst: pcie3-rst {
-			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-
-		vcc3v3_pcie30_en: vcc3v3-pcie30-en {
-			rockchip,pins = <2 RK_PC5 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-
 };
 
 &pwm15 {
@@ -665,7 +630,7 @@
 
 		pinctrl-names = "default", "pmic-power-off";
 		pinctrl-0 = <&pmic_pins>, <&rk806_dvs1_null>,
-					<&rk806_dvs2_null>, <&rk806_dvs3_null>;
+			    <&rk806_dvs2_null>, <&rk806_dvs3_null>;
 		pinctrl-1 = <&rk806_dvs1_pwrdn>;
 
 		system-power-controller;
@@ -717,6 +682,7 @@
 				regulator-ramp-delay = <12500>;
 				regulator-name = "vdd_gpu_s0";
 				regulator-enable-ramp-delay = <400>;
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
@@ -742,6 +708,7 @@
 				regulator-max-microvolt = <750000>;
 				regulator-ramp-delay = <12500>;
 				regulator-name = "vdd_log_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 					regulator-suspend-microvolt = <750000>;
@@ -755,6 +722,7 @@
 				regulator-max-microvolt = <950000>;
 				regulator-ramp-delay = <12500>;
 				regulator-name = "vdd_vdenc_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
@@ -768,6 +736,7 @@
 				regulator-max-microvolt = <900000>;
 				regulator-ramp-delay = <12500>;
 				regulator-name = "vdd_ddr_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 					regulator-suspend-microvolt = <850000>;
@@ -778,6 +747,7 @@
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-name = "vdd2_ddr_s3";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
@@ -791,6 +761,7 @@
 				regulator-max-microvolt = <2000000>;
 				regulator-ramp-delay = <12500>;
 				regulator-name = "vdd_2v0_pldo_s3";
+
 				regulator-state-mem {
 					regulator-on-in-suspend;
 					regulator-suspend-microvolt = <2000000>;
@@ -803,6 +774,7 @@
 				regulator-min-microvolt = <3300000>;
 				regulator-max-microvolt = <3300000>;
 				regulator-name = "vcc_3v3_s3";
+
 				regulator-state-mem {
 					regulator-on-in-suspend;
 					regulator-suspend-microvolt = <3300000>;
@@ -813,6 +785,7 @@
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-name = "vddq_ddr_s0";
+
 				regulator-state-mem {
 					regulator-on-in-suspend;
 				};
@@ -824,6 +797,7 @@
 				regulator-min-microvolt = <1800000>;
 				regulator-max-microvolt = <1800000>;
 				regulator-name = "vcc_1v8_s3";
+
 				regulator-state-mem {
 					regulator-on-in-suspend;
 					regulator-suspend-microvolt = <1800000>;
@@ -837,6 +811,7 @@
 				regulator-max-microvolt = <1800000>;
 				regulator-ramp-delay = <12500>;
 				regulator-name = "avcc_1v8_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
@@ -848,6 +823,7 @@
 				regulator-min-microvolt = <1800000>;
 				regulator-max-microvolt = <1800000>;
 				regulator-name = "vcc_1v8_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 					regulator-suspend-microvolt = <1800000>;
@@ -861,6 +837,7 @@
 				regulator-min-microvolt = <1200000>;
 				regulator-max-microvolt = <1200000>;
 				regulator-name = "avdd_1v2_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
@@ -872,6 +849,7 @@
 				regulator-min-microvolt = <3300000>;
 				regulator-max-microvolt = <3300000>;
 				regulator-name = "vcc_3v3_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
@@ -883,6 +861,7 @@
 				regulator-min-microvolt = <1800000>;
 				regulator-max-microvolt = <3300000>;
 				regulator-name = "vccio_sd_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
@@ -894,6 +873,7 @@
 				regulator-min-microvolt = <1800000>;
 				regulator-max-microvolt = <1800000>;
 				regulator-name = "pldo6_s3";
+
 				regulator-state-mem {
 					regulator-on-in-suspend;
 					regulator-suspend-microvolt = <1800000>;
@@ -907,6 +887,7 @@
 				regulator-min-microvolt = <750000>;
 				regulator-max-microvolt = <750000>;
 				regulator-name = "vdd_0v75_s3";
+
 				regulator-state-mem {
 					regulator-on-in-suspend;
 					regulator-suspend-microvolt = <750000>;
@@ -919,6 +900,7 @@
 				regulator-min-microvolt = <850000>;
 				regulator-max-microvolt = <850000>;
 				regulator-name = "vdd_ddr_pll_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 					regulator-suspend-microvolt = <850000>;
@@ -931,6 +913,7 @@
 				regulator-min-microvolt = <750000>;
 				regulator-max-microvolt = <750000>;
 				regulator-name = "avdd_0v75_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 				};
@@ -942,6 +925,7 @@
 				regulator-min-microvolt = <850000>;
 				regulator-max-microvolt = <850000>;
 				regulator-name = "vdd_0v85_s0";
+
 				regulator-state-mem {
 					regulator-off-in-suspend;
 
@@ -960,6 +944,14 @@
 				};
 			};
 		};
+	};
+};
+
+// Deviating from the normal sort order here because avcc_1v8_s0 is not known before the &spi2 section is parsed,
+// thus causing a DTC compiler error.
+&avcc_1v8_s0 {
+	regulator-state-mem {
+		regulator-on-in-suspend;
 	};
 };
 
@@ -989,10 +981,6 @@
 	status = "okay";
 };
 
-&dfi {
-	status = "okay";
-};
-
 // thermal sensor analog / digital converter (CPU temperatures etc.)
 &tsadc {
 	status = "okay";
@@ -1005,8 +993,29 @@
 	};
 };
 
-&avcc_1v8_s0{
-	regulator-state-mem {
-		regulator-on-in-suspend;
-	};
+&vcc3v3_pcie30 {
+	gpios = <&gpio2 RK_PC5 GPIO_ACTIVE_HIGH>;
+	startup-delay-us = <5000>;
+	status = "okay";
+};
+
+&vcc5v0_host {
+	gpio = <&pca9555 PCA_IO0_5 GPIO_ACTIVE_HIGH>;
+	vin-supply = <&vcc5v0_usb>;
+	status = "okay";
+};
+
+&vcc_fan_pwr_en {
+	status = "okay";
+	gpio = <&pca9555 PCA_IO1_3 GPIO_ACTIVE_HIGH>;  //PCA_IO 13
+};
+
+&vcc_sata_pwr_en {
+	status = "okay";
+	gpio = <&pca9555 PCA_IO1_2 GPIO_ACTIVE_HIGH>;  //PCA_IO 12
+};
+
+&vcc_sdcard_pwr_en {
+	gpio = <&pca9555 PCA_IO1_5 GPIO_ACTIVE_HIGH>;  //PCA_IO 15
+	status = "okay";
 };
