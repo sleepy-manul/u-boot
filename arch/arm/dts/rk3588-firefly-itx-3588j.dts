@@ -483,6 +483,8 @@
 
 &sdhci {
 	bus-width = <8>;
+	mmc-hs400-1_8v;
+	mmc-hs400-enhanced-strobe;
 	no-sd;
 	no-sdio;
 	non-removable;
@@ -491,13 +493,16 @@
 };
 
 &sdmmc {
+	cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
 	bus-width = <4>;
 	cap-mmc-highspeed;
 	cap-sd-highspeed;
 	disable-wp;
 	max-frequency = <150000000>;
+	mmc-hs200-1_8v;
 	no-mmc;
 	no-sdio;
+	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_det &sdmmc_bus4 &sdmmc_pwren>;
 	sd-uhs-sdr104;
 	vqmmc-supply = <&vccio_sd_s0>;
 	status = "okay";
@@ -1019,3 +1024,8 @@
 	gpio = <&pca9555 PCA_IO1_5 GPIO_ACTIVE_HIGH>;  //PCA_IO 15
 	status = "okay";
 };
+
+/*
+ * Remember: In addition to the DTB created from this file, U-Boot automatically includes rk3588-firefly-itx-3588j-u-boot.dtsi
+ *           at this point during the build.
+ */

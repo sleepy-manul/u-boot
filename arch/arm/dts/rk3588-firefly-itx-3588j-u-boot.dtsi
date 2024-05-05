@@ -4,8 +4,6 @@
  */
 
 #include "rk3588-u-boot.dtsi"
-#include "rk3588-firefly-itx-3588j-i2c0.dtsi"
-#include "rk3588-firefly-itx-3588j-audio.dtsi"
 #include "rk3588-firefly-itx-3588j-i2c6.dtsi"
 
 / {
@@ -106,18 +104,6 @@
     status = "okay";
 }; */
 
-&pcfg_pull_up_drv_level_2 {
-	bootph-pre-ram;
-};
-
-&pcfg_pull_up {
-	bootph-pre-ram;
-};
-
-&pcfg_pull_none {
-	bootph-pre-ram;
-};
-
 &pcie30_phy_grf {
 	bootph-all;
 	status = "okay";
@@ -126,34 +112,6 @@
 &php_grf {
 	bootph-all;
 	status = "okay";
-};
-
-&pinctrl {
-	bootph-all;
-
-	sdmmc {
-		bootph-all;
-
-		sdmmc_bus4: sdmmc-bus4 {
-			bootph-all;
-		};
-
-		sdmmc_clk: sdmmc-clk {
-			bootph-all;
-		};
-
-		sdmmc_cmd: sdmmc-cmd {
-			bootph-all;
-		};
-
-		sdmmc_det: sdmmc-det {
-			bootph-all;
-		};
-
-		sdmmc_pwren: sdmmc-pwren {
-			bootph-all;
-		};
-	};
 };
 
 &pipe_phy0_grf {
@@ -212,21 +170,16 @@
 };
 
 &sdmmc {
-	status = "okay";
+	bootph-pre-ram;
+};
+
+&sdmmc_pwren {
+	bootph-pre-ram;
 };
 
 &sdhci {
 	bootph-pre-ram;
 	status = "okay";
-	/delete-property/ mmc-hs200-1_8v;
-	mmc-hs400-1_8v;
-	mmc-hs400-enhanced-strobe;
-	/delete-property/ cap-mmc-highspeed;
-};
-
-&sfc {
-	bootph-pre-ram;
-	u-boot,spl-sfc-no-dma;
 };
 
 // DEBUG-Port
