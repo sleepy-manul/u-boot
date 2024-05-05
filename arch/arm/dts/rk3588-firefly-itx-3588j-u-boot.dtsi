@@ -154,7 +154,6 @@
 
 &saradc {
 	bootph-all;
-	status = "okay";
 };
 
 &scmi {

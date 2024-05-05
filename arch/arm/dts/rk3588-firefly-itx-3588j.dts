@@ -38,12 +38,12 @@
 	};
 
 	adc_keys: adc-keys {
-		status = "okay";
 		compatible = "adc-keys";
 		io-channels = <&saradc 1>;
 		io-channel-names = "buttons";
 		keyup-threshold-microvolt = <1800000>;
 		poll-interval = <100>;
+		status = "okay";
 
 		button-recovery {
 			label = "F12";
@@ -614,7 +614,7 @@
 
 // Successive Approximation Register (SAR) A/D Converter
 &saradc {
-	vref-supply = <&avcc_1v8_s0>;
+	vref-supply = <&vcc_1v8_s0>;
 	status = "okay";
 };
 

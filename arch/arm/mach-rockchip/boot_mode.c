@@ -51,7 +51,7 @@ __weak int rockchip_dnl_key_pressed(void)
 
 	ret = -ENODEV;
 	uclass_foreach_dev(dev, uc) {
-		if (!strncmp(dev->name, "saradc", 6)) {
+		if (!strncmp(dev->name, "adc", 3)) {
 			ret = adc_channel_single_shot(dev->name, 1, &val);
 			break;
 		}
